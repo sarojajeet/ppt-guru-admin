@@ -4,13 +4,13 @@ import AuthScreen from './components/AuthScreen';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import Dashboard from './components/Dashboard';
-import AILab from './components/AILab';
 import EditorPage from './components/EditorPage';
 import Users from './components/Users';
 import Pricing from './components/Pricing';
 import Files from './components/Files';
 import System from './components/System';
 import './App.css';
+import AILab from './components/Ailab';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
