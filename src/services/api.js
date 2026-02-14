@@ -1,8 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  // baseURL: "http://localhost:5000/api",
-  baseURL: "https://lionfish-app-pk8s6.ondigitalocean.app/api",
+  baseURL: "http://localhost:5000/api",
 });
 
 API.interceptors.request.use((req) => {
@@ -22,15 +21,6 @@ export const analyzeDocument = (file) => {
   formData.append("file", file);
   return API.post("/document/analyze", formData);
 };
-
-// export const generateFinalDocument = (documentId, format) => {
-//   return API.post("/document/generate", { documentId, format });
-// };
-
-// export const updateDocument = (documentId, content) => {
-//   return API.put(`/document/update`, { documentId, content });
-// };
-
 
 /**
  * Get document by ID

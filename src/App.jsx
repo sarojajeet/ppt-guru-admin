@@ -4,13 +4,16 @@ import AuthScreen from './components/AuthScreen';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import Dashboard from './components/Dashboard';
-import EditorPage from './components/EditorPage';
 import Users from './components/Users';
 import Pricing from './components/Pricing';
 import Files from './components/Files';
 import System from './components/System';
 import './App.css';
 import AILab from './components/Ailab';
+import EditorPage from './preview/EditorPage';
+import A4PreviewEditor from './preview/A4PreviewEditor';
+import PPTPreviewEditor from './preview/PPTPreviewEditor';
+// import EditorPage from './components/EditorPage';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -66,20 +69,10 @@ function App() {
       )}
 
       <Routes>
-        {/* Editor Route - Full Screen (Components inside manage their own layout if needed, but here it looks like EditorPage is standalone or needs layout?) 
-            Actually, the user likely wants the sidebar/header for normal pages, but maybe not for the editor? 
-            Let's assume Editor is standalone for focus, or we can wrap it. 
-            The previous design had it inside the main layout. Let's keep it consistent or make it standalone. 
-            "Open in new tab" usually implies a standalone focus mode, but keeping layout is safer.
-            However, the EditorPage design seemed full-height. Let's try to keep the layout for now for consistency,
-            OR, since it's a "New Tab", maybe it should just be the editor.
-            Let's use a Layout wrapper for the main app, and maybe Editor is separate or same.
-            For now, let's keep everything under the standard layout for simplicity, 
-            EXCEPT if the user wants "only editor". 
-            Let's stick to the Layout wrapping everything.
-        */}
-
+        {/* Standalone Editor Routes */}
         <Route path="/editor/:documentId" element={<EditorPage />} />
+        <Route path="/preview/a4/:documentId" element={<A4PreviewEditor />} />
+        <Route path="/preview/ppt/:documentId" element={<PPTPreviewEditor />} />
 
         <Route path="*" element={
           <div className="flex-1 flex h-full">

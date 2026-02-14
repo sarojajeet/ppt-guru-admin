@@ -1,10 +1,11 @@
 
-import { analyzeDocument, generateFinalDocument } from '@/services/api';
-import React, { useState, useEffect } from 'react';
+import { analyzeDocument } from '@/services/api';
+import React, { useState } from 'react';
 import ReactMarkdown from "react-markdown";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import "katex/dist/katex.min.css";
+import { useNavigate } from 'react-router-dom';
 
 const preprocessMath = (content) => {
   if (!content) return "";
@@ -14,6 +15,7 @@ const preprocessMath = (content) => {
 };
 
 const AILab = () => {
+  const navigate = useNavigate();
   const [pipelineSteps, setPipelineSteps] = useState([]);
   const [showPreview, setShowPreview] = useState(false);
   const [documentId, setDocumentId] = useState(null);
@@ -55,7 +57,6 @@ const AILab = () => {
       // STEP 2: OCR
       setLoaderProgress(20);
       setLoaderText("CONNECTING TO OCR ENGINE...");
-
       setPipelineSteps(prev => [...prev, {
         title: "OCR Processing",
         description: "Extracting text...",
@@ -72,7 +73,6 @@ const AILab = () => {
       // STEP 3: Data Extraction done
       setLoaderProgress(50);
       setLoaderText("AI ANALYZING CONTENT...");
-
       setPipelineSteps(prev => {
         const updated = [...prev];
         updated[1].icon = "ri-checkbox-circle-fill";
@@ -89,7 +89,6 @@ const AILab = () => {
       // STEP 4: Formatting
       setLoaderProgress(75);
       setLoaderText("AI FORMATTING DOCUMENT...");
-
       setPipelineSteps(prev => {
         const updated = [...prev];
         updated[2].icon = "ri-checkbox-circle-fill";
@@ -106,7 +105,6 @@ const AILab = () => {
       // STEP 5: Complete
       setLoaderProgress(90);
       setLoaderText("FINAL RENDERING...");
-
       setPipelineSteps(prev => {
         const updated = [...prev];
         updated[3].icon = "ri-checkbox-circle-fill";
@@ -135,7 +133,6 @@ const AILab = () => {
 
   const renderFromAI = (aiData) => {
     const docTitle = aiData.title || "Mathematics Problem Set";
-
     let markdown = `# ${docTitle}\n\n`;
 
     aiData.sections.forEach((sec, idx) => {
@@ -157,138 +154,137 @@ const AILab = () => {
     return markdown;
   };
 
-  const openEditor = (format) => {
+  const openEditor = () => {
     if (!documentId) {
       alert("No document loaded. Please upload a file first.");
       return;
     }
-    const url = `/editor/${documentId}?format=${format}`;
-    window.open(url, '_blank');
+    // Navigate to editor page
+    navigate(`/editor/${documentId}`);
   };
 
   return (
-    <div className="section-view">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-        <div>
-          <h3 className="text-xl font-bold text-white">AI Processing Lab</h3>
-          <p className="text-xs text-slate-400">Test Mathpix OCR & AI Formatting Engine</p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-8 text-center">
+          <h1 className="text-5xl font-black bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent mb-2">
+            AI Processing Lab
+          </h1>
+          <p className="text-slate-400">Test Mathpix OCR & AI Formatting Engine</p>
+          <button
+            onClick={resetLab}
+            className="mt-4 px-4 py-2 bg-red-600/20 border border-red-500 text-red-400 rounded-lg hover:bg-red-600/40 transition"
+          >
+            <i className="ri-restart-line mr-2"></i>
+            Reset Engine
+          </button>
         </div>
-        <button
-          onClick={resetLab}
-          className="text-slate-400 hover:text-white text-sm flex items-center gap-2 transition hover:bg-white/5 px-3 py-1 rounded-lg"
-        >
-          <i className="ri-refresh-line"></i> Reset Engine
-        </button>
-      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 h-[calc(100vh-250px)]">
-        {/* Left Column */}
-        <div className="flex flex-col gap-6">
-          {/* Upload Area */}
-          <label className="glass p-6 md:p-8 rounded-2xl border-2 border-dashed border-slate-700 hover:border-indigo-500 transition-all duration-300 cursor-pointer flex flex-col items-center justify-center text-center h-40 md:h-48 group bg-slate-900/30">
-            <input
-              type="file"
-              className="hidden"
-              onChange={runLabSimulation}
-              accept=".pdf,.jpg,.jpeg,.png"
-            />
-            <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition group-hover:bg-indigo-500/20">
-              <i className="ri-upload-cloud-2-fill text-3xl text-indigo-500"></i>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Left Column */}
+          <div className="space-y-6">
+            {/* Upload Area */}
+            <div className="bg-slate-900/50 border-2 border-dashed border-slate-700 rounded-2xl p-8 hover:border-blue-500 transition-all duration-300">
+              <label className="cursor-pointer flex flex-col items-center gap-4">
+                <i className="ri-upload-cloud-2-fill text-6xl text-blue-500"></i>
+                <div className="text-center">
+                  <p className="text-lg font-bold">Upload Document</p>
+                  <p className="text-sm text-slate-500">PDF, JPG, PNG supported</p>
+                </div>
+                <input
+                  type="file"
+                  onChange={runLabSimulation}
+                  className="hidden"
+                  accept=".pdf,.jpg,.jpeg,.png"
+                />
+              </label>
             </div>
-            <h4 className="font-bold text-white">Upload Document</h4>
-            <p className="text-xs text-slate-400 mt-1">PDF, JPG, PNG supported</p>
-          </label>
 
-          {/* Pipeline Steps */}
-          <div className="glass p-4 md:p-6 rounded-2xl flex-1 overflow-hidden flex flex-col">
-            <h4 className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-6">
-              Neural Pipeline
-            </h4>
-            <div className="space-y-6 md:space-y-8 relative pl-6 border-l border-slate-700 ml-2 overflow-y-auto">
+            {/* Pipeline Steps */}
+            <div className="bg-slate-900/50 border border-slate-700 rounded-2xl p-6">
+              <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+                <i className="ri-cpu-line text-purple-500"></i>
+                Neural Pipeline
+              </h3>
               {pipelineSteps.length === 0 ? (
-                <div className="text-slate-600 text-sm italic">Engine Idle...</div>
+                <p className="text-slate-600 text-center py-8">Engine Idle...</p>
               ) : (
                 pipelineSteps.map((step, index) => (
-                  <div key={index} className={`fade-in pl-4 border-l border-${step.color}-500 relative`}>
-                    <i className={`${step.icon} absolute -left-[9px] text-${step.color}-500 bg-[#0f172a] ${step.status === 'processing' ? 'animate-spin' : ''}`}></i>
-                    <div className="text-white text-sm font-bold">{step.title}</div>
-                    <div className="text-xs text-slate-400">{step.description}</div>
+                  <div
+                    key={index}
+                    className={`flex items-center gap-4 p-4 mb-3 rounded-xl border bg-gradient-to-r ${step.color === 'green' ? 'from-green-900/20 to-green-800/20 border-green-700' :
+                      step.color === 'yellow' ? 'from-yellow-900/20 to-yellow-800/20 border-yellow-700' :
+                        step.color === 'blue' ? 'from-blue-900/20 to-blue-800/20 border-blue-700' :
+                          'from-purple-900/20 to-purple-800/20 border-purple-700'
+                      }`}
+                  >
+                    <i className={`${step.icon} text-2xl ${step.status === 'processing' ? 'animate-spin' : ''}`}></i>
+                    <div className="flex-1">
+                      <p className="font-bold">{step.title}</p>
+                      <p className="text-xs text-slate-400">{step.description}</p>
+                    </div>
                   </div>
                 ))
               )}
             </div>
           </div>
-        </div>
 
-        {/* Right Column - Preview */}
-        <div className="glass p-1 rounded-2xl relative flex flex-col shadow-2xl shadow-black/50 h-full">
-          <div className="bg-slate-900/80 p-3 rounded-t-xl flex justify-between items-center">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+          {/* Right Column - Preview */}
+          <div className="bg-slate-900/50 border border-slate-700 rounded-2xl p-6 relative min-h-[600px]">
+            <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+              <i className="ri-eye-line text-indigo-500"></i>
               Live Output
-            </span>
-            <div className="flex gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-red-500"></span>
-              <span className="w-2.5 h-2.5 rounded-full bg-yellow-500"></span>
-              <span className="w-2.5 h-2.5 rounded-full bg-green-500"></span>
-            </div>
-          </div>
+            </h3>
 
-          {/* Action Buttons Overlay */}
-          {showPreview && (
-            <div className="absolute top-16 right-6 z-20 flex flex-col gap-3">
-              <button
-                onClick={() => openEditor('A4')}
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-sm font-bold py-3 px-6 rounded-lg shadow-2xl transition-all duration-200 flex items-center gap-2 hover:scale-105"
-              >
-                <i className="ri-file-pdf-line text-lg"></i>
-                <span>Check PDF</span>
-              </button>
-              <button
-                onClick={() => openEditor('PPT')}
-                className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 text-white text-sm font-bold py-3 px-6 rounded-lg shadow-2xl transition-all duration-200 flex items-center gap-2 hover:scale-105"
-              >
-                <i className="ri-slideshow-line text-lg"></i>
-                <span>Check PPT</span>
-              </button>
-            </div>
-          )}
+            {/* Edit Content Button */}
+            {showPreview && (
+              <div className="absolute top-6 right-6 z-10">
+                <button
+                  onClick={openEditor}
+                  className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-sm font-bold py-3 px-6 rounded-lg shadow-2xl transition-all duration-200 flex items-center gap-2 hover:scale-105"
+                >
+                  <i className="ri-edit-box-fill"></i>
+                  Edit Content
+                </button>
+              </div>
+            )}
 
-          <div className="flex-1 bg-slate-950 relative overflow-hidden flex items-center justify-center rounded-b-xl">
             {!showPreview && !showLoader && (
-              <div className="text-center opacity-30">
-                <i className="ri-file-text-line text-7xl text-slate-500"></i>
-                <p className="text-slate-500 mt-4 text-sm font-mono">WAITING FOR INPUT STREAM</p>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <p className="text-slate-700 font-mono text-xl tracking-widest animate-pulse">
+                  WAITING FOR INPUT STREAM
+                </p>
               </div>
             )}
 
             {showPreview && (
-              <div className="paper-preview w-full h-full p-6 md:p-10 overflow-y-auto text-left text-sm leading-relaxed">
-                <ReactMarkdown
-                  remarkPlugins={[remarkMath]}
-                  rehypePlugins={[[rehypeKatex, { strict: false }]]}
-                  components={{
-                    img: ({ node, ...props }) => (
-                      <img {...props} style={{ maxWidth: "100%", margin: "1rem auto" }} />
-                    )
-                  }}
-                >
-                  {preprocessMath(paperContent)}
-                </ReactMarkdown>
-
+              <div className="bg-white text-slate-900 rounded-xl p-8 overflow-y-auto max-h-[550px] shadow-inner">
+                <div className="prose prose-sm max-w-none">
+                  <ReactMarkdown
+                    remarkPlugins={[remarkMath]}
+                    rehypePlugins={[[rehypeKatex, { strict: false }]]}
+                  >
+                    {preprocessMath(paperContent)}
+                  </ReactMarkdown>
+                </div>
               </div>
             )}
 
             {showLoader && (
-              <div className="absolute inset-0 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center z-10">
-                <div className="w-48 h-1 bg-slate-800 rounded-full overflow-hidden mb-4">
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+                <div className="relative w-32 h-32">
+                  <div className="absolute inset-0 border-8 border-slate-800 rounded-full"></div>
                   <div
-                    className="loader-bar h-full bg-indigo-500"
-                    style={{ width: `${loaderProgress}%` }}
+                    className="absolute inset-0 border-8 border-t-blue-500 border-r-purple-500 border-transparent rounded-full animate-spin"
                   ></div>
+                  <div className="absolute inset-0 flex items-center justify-center text-2xl font-bold">
+                    {loaderProgress}%
+                  </div>
                 </div>
-                <div className="text-indigo-400 font-mono text-xs animate-pulse">
+                <p className="text-sm font-mono tracking-wider text-blue-400 animate-pulse">
                   {loaderText}
-                </div>
+                </p>
               </div>
             )}
           </div>

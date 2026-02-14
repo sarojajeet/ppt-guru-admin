@@ -77,11 +77,28 @@ const EditorPage = () => {
         fetchContent();
     }, [documentId]);
 
+    // const handleSave = async () => {
+    //     setIsSaving(true);
+    //     try {
+    //         if (documentId) {
+    //             await updateDocument(documentId, content);
+    //             alert("Document saved successfully!");
+    //         } else {
+    //             alert("Error: No document ID found.");
+    //         }
+    //     } catch (error) {
+    //         console.error("Save failed:", error);
+    //         alert("Failed to save document.");
+    //     } finally {
+    //         setIsSaving(false);
+    //     }
+    // };
     const handleSave = async () => {
         setIsSaving(true);
         try {
             if (documentId) {
-                await updateDocument(documentId, content);
+                const processedContent = preprocessMath(content);
+                await updateDocument(documentId, processedContent);
                 alert("Document saved successfully!");
             } else {
                 alert("Error: No document ID found.");
@@ -94,18 +111,43 @@ const EditorPage = () => {
         }
     };
 
-    const handleGenerateValues = async () => {
+    // const handleGenerateValues = async (selectedFormat) => {
+    //     setIsGenerating(true);
+    //     try {
+    //         if (documentId) {
+    //             await updateDocument(documentId, content);
+    //         }
+
+    //         const res = await generateFinalDocument(documentId, selectedFormat);
+    //         const { downloadUrl } = res.data;
+
+    //         const link = document.createElement('a');
+    //         link.href = downloadUrl;
+    //         link.setAttribute('download', '');
+    //         document.body.appendChild(link);
+    //         link.click();
+    //         document.body.removeChild(link);
+
+    //     } catch (error) {
+    //         console.error("Generation failed:", error);
+    //         alert("Failed to generate document.");
+    //     } finally {
+    //         setIsGenerating(false);
+    //     }
+    // };
+
+    const handleGenerateValues = async (selectedFormat) => {
         setIsGenerating(true);
         try {
-            // Auto-save before generating
+            const processedContent = preprocessMath(content);
+
             if (documentId) {
-                await updateDocument(documentId, content);
+                await updateDocument(documentId, processedContent);
             }
 
-            const res = await generateFinalDocument(documentId, format);
+            const res = await generateFinalDocument(documentId, selectedFormat);
             const { downloadUrl } = res.data;
 
-            // Trigger download
             const link = document.createElement('a');
             link.href = downloadUrl;
             link.setAttribute('download', '');
@@ -149,6 +191,8 @@ const EditorPage = () => {
                 </div>
 
                 <div className="flex gap-3">
+
+                    {/* Save */}
                     <button
                         onClick={handleSave}
                         disabled={isSaving}
@@ -162,22 +206,28 @@ const EditorPage = () => {
                         Save
                     </button>
 
+                    {/* A4 Button */}
                     <button
-                        onClick={handleGenerateValues}
+                        onClick={() => handleGenerateValues("A4")}
                         disabled={isGenerating}
-                        className={`px-4 py-2 rounded-lg transition flex items-center gap-2 font-bold text-white shadow-lg disabled:opacity-50 ${format === 'PPT'
-                            ? 'bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-400 hover:to-red-500'
-                            : 'bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500'
-                            }`}
+                        className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 rounded-lg transition flex items-center gap-2 font-bold text-white shadow-lg disabled:opacity-50"
                     >
-                        {isGenerating ? (
-                            <i className="ri-loader-4-line animate-spin"></i>
-                        ) : (
-                            <i className="ri-file-download-fill"></i>
-                        )}
-                        Download {format}
+                        <i className="ri-file-download-fill"></i>
+                        Download A4
                     </button>
+
+                    {/* PPT Button */}
+                    <button
+                        onClick={() => handleGenerateValues("PPT")}
+                        disabled={isGenerating}
+                        className="px-4 py-2 bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-400 hover:to-red-500 rounded-lg transition flex items-center gap-2 font-bold text-white shadow-lg disabled:opacity-50"
+                    >
+                        <i className="ri-file-download-fill"></i>
+                        Download PPT
+                    </button>
+
                 </div>
+
             </div>
 
             {/* Editor Content */}
