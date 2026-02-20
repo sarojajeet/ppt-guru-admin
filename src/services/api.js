@@ -43,6 +43,14 @@ export const updateDocument = async (documentId, content) => {
 };
 
 /**
+ * Get all documents
+ * @returns {Promise} List of documents
+ */
+export const getAllDocuments = async () => {
+  return API.get('/document');
+};
+
+/**
  * Generate final document (PDF or PPT)
  * @param {string} documentId - Document ID
  * @param {string} format - 'A4' for PDF or 'PPT' for PowerPoint

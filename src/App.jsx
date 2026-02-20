@@ -10,10 +10,13 @@ import Files from './components/Files';
 import System from './components/System';
 import './App.css';
 import AILab from './components/Ailab';
-import EditorPage from './preview/EditorPage';
+// import EditorPage from './preview/EditorPage';
 import A4PreviewEditor from './preview/A4PreviewEditor';
 import PPTPreviewEditor from './preview/PPTPreviewEditor';
-// import EditorPage from './components/EditorPage';
+import EditorPage from './components/EditorPage';
+import PPTEditor from './components/PPTEditor';
+import NexGenV7 from './preview/SlideCanvas';
+import DocumentList from './components/DocumentList';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -73,6 +76,8 @@ function App() {
         <Route path="/editor/:documentId" element={<EditorPage />} />
         <Route path="/preview/a4/:documentId" element={<A4PreviewEditor />} />
         <Route path="/preview/ppt/:documentId" element={<PPTPreviewEditor />} />
+        <Route path="/ppt-editor/:id" element={<PPTEditor />} />
+        <Route path="/pptxcanvas" element={<NexGenV7 />} />
 
         <Route path="*" element={
           <div className="flex-1 flex h-full">
@@ -84,9 +89,9 @@ function App() {
                   <Route path="/" element={<Navigate to="/dashboard" replace />} />
                   <Route path="/dashboard" element={<Dashboard db={db} />} />
                   <Route path="/playground" element={<AILab />} />
+                  <Route path="/documents" element={<DocumentList />} />
                   <Route path="/users" element={<Users db={db} updateDb={updateDb} />} />
                   <Route path="/plans" element={<Pricing db={db} updateDb={updateDb} />} />
-                  <Route path="/files" element={<Files db={db} updateDb={updateDb} />} />
                   <Route path="/system" element={<System maintenanceMode={maintenanceMode} setMaintenanceMode={setMaintenanceMode} />} />
                 </Routes>
               </div>

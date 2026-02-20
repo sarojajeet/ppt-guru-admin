@@ -6,9 +6,9 @@ const Sidebar = ({ currentPage, navigate, onLogout }) => {
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: 'ri-layout-grid-fill', section: 'Core' },
     { id: 'playground', label: 'AI Lab', icon: 'ri-flask-fill', section: 'Core' },
+    { id: 'documents', label: 'Doc List', icon: 'ri-file-list-3-line', section: 'Core' },
     { id: 'users', label: 'Users', icon: 'ri-team-fill', section: 'Manage' },
     { id: 'plans', label: 'Pricing', icon: 'ri-vip-crown-2-fill', section: 'Manage' },
-    { id: 'files', label: 'Documents', icon: 'ri-folder-shield-2-fill', section: 'Manage' },
     { id: 'system', label: 'System', icon: 'ri-settings-4-fill', section: 'Settings' },
   ];
 
@@ -43,9 +43,8 @@ const Sidebar = ({ currentPage, navigate, onLogout }) => {
 
       {/* Sidebar */}
       <aside
-        className={`w-72 glass border-r border-white/5 flex flex-col z-40 fixed md:relative h-full transition-transform duration-300 ${
-          isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
-        }`}
+        className={`w-72 glass border-r border-white/5 flex flex-col z-40 fixed md:relative h-full transition-transform duration-300 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+          }`}
       >
         <div className="p-6 md:p-8 flex items-center gap-4">
           <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
@@ -71,11 +70,10 @@ const Sidebar = ({ currentPage, navigate, onLogout }) => {
                 <button
                   key={item.id}
                   onClick={() => handleNavigate(item.id)}
-                  className={`group w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 transition-all duration-300 border ${
-                    currentPage === item.id
-                      ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20'
-                      : 'text-slate-400 hover:bg-white/5 hover:text-white border-transparent'
-                  }`}
+                  className={`group w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 transition-all duration-300 border ${currentPage === item.id
+                    ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20'
+                    : 'text-slate-400 hover:bg-white/5 hover:text-white border-transparent'
+                    }`}
                 >
                   <i className={`${item.icon} transition group-hover:scale-110`}></i>
                   {item.label}

@@ -76,23 +76,6 @@ const EditorPage = () => {
         };
         fetchContent();
     }, [documentId]);
-
-    // const handleSave = async () => {
-    //     setIsSaving(true);
-    //     try {
-    //         if (documentId) {
-    //             await updateDocument(documentId, content);
-    //             alert("Document saved successfully!");
-    //         } else {
-    //             alert("Error: No document ID found.");
-    //         }
-    //     } catch (error) {
-    //         console.error("Save failed:", error);
-    //         alert("Failed to save document.");
-    //     } finally {
-    //         setIsSaving(false);
-    //     }
-    // };
     const handleSave = async () => {
         setIsSaving(true);
         try {
@@ -111,49 +94,24 @@ const EditorPage = () => {
         }
     };
 
-    // const handleGenerateValues = async (selectedFormat) => {
-    //     setIsGenerating(true);
-    //     try {
-    //         if (documentId) {
-    //             await updateDocument(documentId, content);
-    //         }
-
-    //         const res = await generateFinalDocument(documentId, selectedFormat);
-    //         const { downloadUrl } = res.data;
-
-    //         const link = document.createElement('a');
-    //         link.href = downloadUrl;
-    //         link.setAttribute('download', '');
-    //         document.body.appendChild(link);
-    //         link.click();
-    //         document.body.removeChild(link);
-
-    //     } catch (error) {
-    //         console.error("Generation failed:", error);
-    //         alert("Failed to generate document.");
-    //     } finally {
-    //         setIsGenerating(false);
-    //     }
-    // };
 
     const handleGenerateValues = async (selectedFormat) => {
         setIsGenerating(true);
         try {
             const processedContent = preprocessMath(content);
-
-            if (documentId) {
-                await updateDocument(documentId, processedContent);
-            }
+            await updateDocument(documentId, processedContent);
 
             const res = await generateFinalDocument(documentId, selectedFormat);
-            const { downloadUrl } = res.data;
 
-            const link = document.createElement('a');
-            link.href = downloadUrl;
-            link.setAttribute('download', '');
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            if (selectedFormat === "PPT") {
+                navigate(`/ppt-editor/${documentId}`, {
+                    state: res.data
+                });
+            } else {
+                navigate(`/a4-editor/${documentId}`, {
+                    state: res.data
+                });
+            }
 
         } catch (error) {
             console.error("Generation failed:", error);
@@ -213,7 +171,7 @@ const EditorPage = () => {
                         className="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-400 hover:to-indigo-500 rounded-lg transition flex items-center gap-2 font-bold text-white shadow-lg disabled:opacity-50"
                     >
                         <i className="ri-file-download-fill"></i>
-                        Download A4
+                        Open As A4
                     </button>
 
                     {/* PPT Button */}
@@ -223,7 +181,7 @@ const EditorPage = () => {
                         className="px-4 py-2 bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-400 hover:to-red-500 rounded-lg transition flex items-center gap-2 font-bold text-white shadow-lg disabled:opacity-50"
                     >
                         <i className="ri-file-download-fill"></i>
-                        Download PPT
+                        Open As PPT
                     </button>
 
                 </div>
