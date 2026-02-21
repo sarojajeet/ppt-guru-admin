@@ -17,6 +17,7 @@ import EditorPage from './components/EditorPage';
 import PPTEditor from './components/PPTEditor';
 import NexGenV7 from './preview/SlideCanvas';
 import DocumentList from './components/DocumentList';
+import FabricEditor from './components/FrabicEditor';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -78,6 +79,7 @@ function App() {
         <Route path="/preview/ppt/:documentId" element={<PPTPreviewEditor />} />
         <Route path="/ppt-editor/:id" element={<PPTEditor />} />
         <Route path="/pptxcanvas" element={<NexGenV7 />} />
+        <Route path="/fabric-editor/:documentId" element={<FabricEditor />} />
 
         <Route path="*" element={
           <div className="flex-1 flex h-full">

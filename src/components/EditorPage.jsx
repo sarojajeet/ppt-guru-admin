@@ -95,17 +95,50 @@ const EditorPage = () => {
     };
 
 
+    // const handleGenerateValues = async (selectedFormat) => {
+    //     setIsGenerating(true);
+    //     try {
+    //         const processedContent = preprocessMath(content);
+    //         await updateDocument(documentId, processedContent);
+
+    //         const res = await generateFinalDocument(documentId, selectedFormat);
+
+    //         if (selectedFormat === "PPT") {
+    //             navigate(`/ppt-editor/${documentId}`, {
+    //                 state: res.data
+    //             });
+    //         } else {
+    //             navigate(`/a4-editor/${documentId}`, {
+    //                 state: res.data
+    //             });
+    //         }
+
+    //     } catch (error) {
+    //         console.error("Generation failed:", error);
+    //         alert("Failed to generate document.");
+    //     } finally {
+    //         setIsGenerating(false);
+    //     }
+    // };
+
     const handleGenerateValues = async (selectedFormat) => {
         setIsGenerating(true);
         try {
+            // 1. Save current markdown content first
             const processedContent = preprocessMath(content);
             await updateDocument(documentId, processedContent);
 
+            // 2. Call backend to generate final document (AI renders it into slides/sections)
             const res = await generateFinalDocument(documentId, selectedFormat);
 
             if (selectedFormat === "PPT") {
-                navigate(`/ppt-editor/${documentId}`, {
-                    state: res.data
+                // ✅ Pass BOTH the rendered data AND the documentId to FabricEditor
+                navigate(`/fabric-editor/${documentId}`, {
+                    state: {
+                        ...res.data,          // rendered slide data from backend
+                        documentId,           // so FabricEditor can also re-fetch if needed
+                    }
+
                 });
             } else {
                 navigate(`/a4-editor/${documentId}`, {
@@ -120,7 +153,6 @@ const EditorPage = () => {
             setIsGenerating(false);
         }
     };
-
     if (loading) {
         return (
             <div className="h-screen flex items-center justify-center bg-slate-950 text-white">

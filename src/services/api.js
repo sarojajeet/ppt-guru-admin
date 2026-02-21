@@ -21,7 +21,7 @@ export const loginAdmin = (credentials) => {
 export const analyzeDocument = (file) => {
   const formData = new FormData();
   formData.append("file", file);
-  return API.post("/document/analyze", formData);
+  return API.post("/document/analyze-admin", formData);
 };
 
 /**
@@ -57,7 +57,7 @@ export const getAllDocuments = async () => {
  * @returns {Promise} Response with downloadUrl and fileName
  */
 export const generateFinalDocument = async (documentId, format) => {
-  return API.post('/document/generate', {
+  return API.post('/document/generate-admin', {
     documentId,
     format,
   });
