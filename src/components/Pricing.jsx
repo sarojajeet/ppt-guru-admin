@@ -1,135 +1,183 @@
-import React, { useState } from 'react';
+
+
+import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
+import axios from 'axios';
+import { createPlan, getPlans, updatePlan } from '@/services/createPlan';
 
-const Pricing = ({ db, updateDb }) => {
-  const [isYearly, setIsYearly] = useState(false);
+const Pricing = () => {
+  const [plans, setPlans] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleEditPlan = async (index) => {
-    const plan = db.plans[index];
-    const { value: newPrice } = await Swal.fire({
-      title: `Edit ${plan.name}`,
-      input: 'number',
-      inputValue: plan.price,
-      inputAttributes: {
-        min: 0,
-        step: 1
-      },
-      background: '#1e293b',
-      color: '#fff',
-      confirmButtonColor: '#6366f1',
-      showCancelButton: true
-    });
-
-    if (newPrice !== undefined && newPrice !== null) {
-      const updatedPlans = [...db.plans];
-      updatedPlans[index].price = parseInt(newPrice);
-      updateDb('plans', updatedPlans);
+  const fetchPlans = async () => {
+    try {
+      const data = await getPlans();
+      setPlans(data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching plans:", error);
+      setLoading(false);
     }
   };
 
-  const getColorClasses = (color) => {
-    const colors = {
-      slate: {
-        bg: 'bg-slate-500/20',
-        text: 'text-slate-400',
-        hover: 'hover:bg-slate-500',
-        checkbox: 'text-slate-500'
-      },
-      indigo: {
-        bg: 'bg-indigo-500/20',
-        text: 'text-indigo-400',
-        hover: 'hover:bg-indigo-500',
-        checkbox: 'text-indigo-500'
-      },
-      fuchsia: {
-        bg: 'bg-fuchsia-500/20',
-        text: 'text-fuchsia-400',
-        hover: 'hover:bg-fuchsia-500',
-        checkbox: 'text-fuchsia-500'
+  useEffect(() => {
+    fetchPlans();
+  }, []);
+
+  const handleCreatePlan = async () => {
+    const { value: formValues } = await Swal.fire({
+      title: 'Create New Plan',
+      html: `
+        <input id="name" class="swal2-input" placeholder="Plan Name">
+        <input id="validity" type="number" class="swal2-input" placeholder="Validity (months)">
+        <input id="credit" type="number" class="swal2-input" placeholder="Credits">
+        <input id="price" type="number" class="swal2-input" placeholder="Price">
+
+        <div style="text-align:left;color:white;margin-top:10px;">
+          <label><input type="checkbox" id="pdfExport"> PDF Export</label><br/>
+          <label><input type="checkbox" id="pptExport"> PPT Export</label><br/>
+          <label><input type="checkbox" id="branding"> Branding</label><br/>
+          <label><input type="checkbox" id="teachingMode"> Teaching Mode</label>
+        </div>
+
+        <textarea id="feature" class="swal2-textarea" placeholder="Features (comma separated)"></textarea>
+      `,
+      background: '#1e293b',
+      color: '#fff',
+      confirmButtonColor: '#6366f1',
+      showCancelButton: true,
+      preConfirm: () => {
+        return {
+          name: document.getElementById('name').value,
+          validity: Number(document.getElementById('validity').value),
+          credit: Number(document.getElementById('credit').value),
+          price: Number(document.getElementById('price').value),
+          pdfExport: document.getElementById('pdfExport').checked,
+          pptExport: document.getElementById('pptExport').checked,
+          branding: document.getElementById('branding').checked,
+          teachingMode: document.getElementById('teachingMode').checked,
+          feature: document.getElementById('feature').value
+            .split(',')
+            .map(f => f.trim())
+        };
       }
-    };
-    return colors[color] || colors.slate;
+    });
+
+    if (formValues && formValues.name && formValues.price) {
+      try {
+        await createPlan(formValues);
+        Swal.fire('Created!', 'Plan added successfully.', 'success');
+        fetchPlans();
+      } catch (error) {
+        Swal.fire('Error', 'Failed to create plan', 'error');
+      }
+    }
   };
+
+  const handleEditPlan = async (plan) => {
+    const { value: formValues } = await Swal.fire({
+      title: 'Edit Plan',
+      html: `
+      <input id="name" class="swal2-input" placeholder="Plan Name" value="${plan.name}">
+      <input id="validity" type="number" class="swal2-input" placeholder="Validity (months)" value="${plan.validity}">
+      <input id="credit" type="number" class="swal2-input" placeholder="Credits" value="${plan.credit}">
+      <input id="price" type="number" class="swal2-input" placeholder="Price" value="${plan.price}">
+
+      <div style="text-align:left;color:white;margin-top:10px;">
+        <label><input type="checkbox" id="pdfExport" ${plan.pdfExport ? "checked" : ""}> PDF Export</label><br/>
+        <label><input type="checkbox" id="pptExport" ${plan.pptExport ? "checked" : ""}> PPT Export</label><br/>
+        <label><input type="checkbox" id="branding" ${plan.branding ? "checked" : ""}> Branding</label><br/>
+        <label><input type="checkbox" id="teachingMode" ${plan.teachingMode ? "checked" : ""}> Teaching Mode</label>
+      </div>
+
+      <textarea id="feature" class="swal2-textarea" placeholder="Features (comma separated)">
+        ${plan.feature.join(", ")}
+      </textarea>
+    `,
+      background: '#1e293b',
+      color: '#fff',
+      confirmButtonColor: '#6366f1',
+      showCancelButton: true,
+      preConfirm: () => {
+        return {
+          name: document.getElementById('name').value,
+          validity: Number(document.getElementById('validity').value),
+          credit: Number(document.getElementById('credit').value),
+          price: Number(document.getElementById('price').value),
+          pdfExport: document.getElementById('pdfExport').checked,
+          pptExport: document.getElementById('pptExport').checked,
+          branding: document.getElementById('branding').checked,
+          teachingMode: document.getElementById('teachingMode').checked,
+          feature: document.getElementById('feature').value
+            .split(',')
+            .map(f => f.trim())
+        };
+      }
+    });
+
+    if (formValues) {
+      try {
+        await updatePlan(plan._id, formValues);
+        Swal.fire('Updated!', 'Plan updated successfully.', 'success');
+        fetchPlans();
+      } catch (error) {
+        Swal.fire('Error', 'Failed to update plan', 'error');
+      }
+    }
+  };
+
+  if (loading) return <div className="text-center text-white p-20">Loading...</div>;
 
   return (
     <div className="section-view">
       <div className="text-center mb-10">
-        <h3 className="text-2xl md:text-3xl font-extrabold text-white mb-3">Choose Your Power</h3>
-        <p className="text-slate-400 text-sm">Select the perfect plan for your AI generation needs.</p>
-        
-        <div className="mt-6 inline-flex items-center gap-3 bg-slate-900/50 p-1.5 rounded-full border border-white/10">
-          <span className="text-xs font-bold text-slate-400 pl-3">Monthly</span>
-          <div className="relative inline-block w-12 h-6 align-middle select-none">
-            <input
-              type="checkbox"
-              id="pricing-toggle"
-              checked={isYearly}
-              onChange={() => setIsYearly(!isYearly)}
-              className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-slate-700 transition-all duration-300"
-            />
-            <label
-              htmlFor="pricing-toggle"
-              className="toggle-label block overflow-hidden h-6 rounded-full bg-slate-700 cursor-pointer transition-colors duration-300"
-            ></label>
-          </div>
-          <span className="text-xs font-bold text-white pr-3">
-            Yearly <span className="text-indigo-400">(-20%)</span>
-          </span>
-        </div>
+        <h3 className="text-2xl md:text-3xl font-extrabold text-white mb-3">Subscription Plans</h3>
+
+        <button
+          onClick={handleCreatePlan}
+          className="mb-8 px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-full text-sm font-bold transition"
+        >
+          Add New Plan
+        </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-6xl mx-auto">
-        {db.plans.map((plan, index) => {
-          const price = isYearly ? Math.floor(plan.price * 12 * 0.8) : plan.price;
-          const period = isYearly ? '/yr' : '/mo';
-          const colors = getColorClasses(plan.color);
-          const borderClass = plan.popular
-            ? 'border-indigo-500/50 glow-border transform scale-105 z-10'
-            : 'border-white/10';
-          const btnClass = plan.popular
-            ? 'bg-gradient-to-r from-indigo-600 to-pink-600 hover:shadow-indigo-500/40 text-white'
-            : 'bg-slate-800 hover:bg-slate-700 text-white';
-
-          return (
-            <div
-              key={index}
-              className={`glass p-6 md:p-8 rounded-3xl border ${borderClass} relative flex flex-col anim-pop group`}
-            >
-              {plan.popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-pink-500 to-indigo-500 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full shadow-lg z-10">
-                  Most Popular
-                </div>
-              )}
-
-              <div className={`w-12 h-12 rounded-2xl ${colors.bg} ${colors.text} flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition`}>
-                <i className={plan.icon}></i>
-              </div>
-
-              <h4 className="text-white font-bold text-lg">{plan.name}</h4>
-
-              <div className="my-4">
-                <span className="text-3xl md:text-4xl font-extrabold text-white">₹{price}</span>
-                <span className="text-slate-500 text-sm font-medium">{period}</span>
-              </div>
-
-              <ul className="space-y-3 mb-8 flex-1">
-                {plan.features.map((feature, fIndex) => (
-                  <li key={fIndex} className="flex items-center gap-3 text-sm text-slate-300">
-                    <i className={`ri-checkbox-circle-fill ${colors.checkbox} text-lg flex-shrink-0`}></i>
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <button
-                onClick={() => handleEditPlan(index)}
-                className={`w-full py-3.5 rounded-xl font-bold transition shadow-lg ${btnClass}`}
-              >
-                Edit Plan
-              </button>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        {plans.map((plan) => (
+          <div key={plan._id} className="glass p-8 rounded-3xl border border-white/10 flex flex-col">
+            <div className="mb-4">
+              <h4 className="text-white font-bold text-xl">{plan.name}</h4>
+              <p className="text-indigo-400 text-sm font-medium">
+                {plan.validity} Months • {plan.credit} Credits
+              </p>
             </div>
-          );
-        })}
+
+            <div className="mb-4">
+              <span className="text-4xl font-extrabold text-white">₹{plan.price}</span>
+            </div>
+
+            <ul className="space-y-2 mb-4 text-sm text-slate-300">
+              {plan.pdfExport && <li>✅ PDF Export</li>}
+              {plan.pptExport && <li>✅ PPT Export</li>}
+              {plan.branding && <li>✅ Branding</li>}
+              {plan.teachingMode && <li>✅ Teaching Mode</li>}
+            </ul>
+
+            <ul className="space-y-3 mb-6 flex-1">
+              {plan.feature.map((f, i) => (
+                <li key={i} className="flex items-center gap-3 text-sm text-slate-300">
+                  <i className="ri-checkbox-circle-fill text-indigo-500 text-lg"></i>
+                  {f}
+                </li>
+              ))}
+            </ul>
+
+            <button
+              onClick={() => handleEditPlan(plan)} className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-xl font-bold transition"
+            >
+              Edit Price
+            </button>
+          </div>
+        ))}
       </div>
     </div>
   );
