@@ -20,7 +20,7 @@ export const loginAdmin = (credentials) => {
 
 export const analyzeDocument = (file) => {
   const formData = new FormData();
-  formData.append("file", file);
+  formData.append("files", file);
   return API.post("/document/analyze-admin", formData);
 };
 
@@ -30,7 +30,7 @@ export const analyzeDocument = (file) => {
  * @returns {Promise} Document data
  */
 export const getDocument = async (documentId) => {
-  return API.get(`/document/${documentId}`);
+  return API.get(`/document/get-by-id/${documentId}`);
 };
 /**
  * Update document content
@@ -39,7 +39,7 @@ export const getDocument = async (documentId) => {
  * @returns {Promise} Updated document
  */
 export const updateDocument = async (documentId, content) => {
-  return API.put(`/document/${documentId}`, { content });
+  return API.put(`/document/update/${documentId}`, { content });
 };
 
 /**
