@@ -21,6 +21,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "fabric": "^7.2.0",
+    "jodit-react": "^5.3.21",
     "jspdf": "^4.2.0",
     "katex": "^0.16.28",
     "lucide-react": "^0.563.0",

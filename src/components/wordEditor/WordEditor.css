@@ -1,0 +1,370 @@
+.word-editor-wrapper {
+  width: 794px; /* A4 width */
+  max-width: 100%; /* Ensure it shrinks on mobile and tablet */
+  min-height: 1123px; /* A4 height */
+  height: max-content; /* Allow page to grow past minimal height */
+  margin: 0 auto;
+  box-shadow: 0 0 10px rgba(0,0,0,0.03);
+  background-color: white;
+  position: relative;
+  overflow: visible;
+  border-radius: 0;
+  border: 1px solid #e5e4e0;
+  box-sizing: border-box;
+}
+
+/* ─── CRITICAL FIX: Force visible text color inside the editor ─── */
+.jodit-wysiwyg {
+  color: #111827 !important;
+  background-color: #ffffff !important;
+}
+
+.jodit-wysiwyg p,
+.jodit-wysiwyg h1,
+.jodit-wysiwyg h2,
+.jodit-wysiwyg h3,
+.jodit-wysiwyg h4,
+.jodit-wysiwyg h5,
+.jodit-wysiwyg h6,
+.jodit-wysiwyg span,
+.jodit-wysiwyg li,
+.jodit-wysiwyg td,
+.jodit-wysiwyg th,
+.jodit-wysiwyg div,
+.jodit-wysiwyg strong,
+.jodit-wysiwyg em,
+.jodit-wysiwyg code,
+.jodit-wysiwyg a,
+.jodit-wysiwyg label {
+  color: #111827 !important;
+}
+
+/* Jodit Toolbar Wrapper - Make it dock cleanly with Glassmorphism */
+.jodit-container:not(.jodit_fullsize) .jodit-toolbar__box {
+  position: fixed !important;
+  top: 49px !important; /* Float just under the 49px app header */
+  left: 0 !important;
+  width: 100vw !important;
+  z-index: 1000 !important;
+  border: none !important;
+  border-bottom: 1px solid #d1d1d1 !important;
+  border-radius: 0 !important;
+  box-shadow: 0 4px 6px -4px rgba(0,0,0,0.05) !important;
+  background: #fdfdfd !important;
+  display: flex !important;
+  flex-wrap: wrap !important; /* Allow wrapping on very small screens */
+  justify-content: center !important; /* Center the icons above the paper */
+  padding: 8px 16px !important;
+}
+
+/* Make Jodit Buttons look modern */
+.jodit-toolbar-button__button {
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.jodit-toolbar-button__button:hover {
+  background-color: rgba(0, 0, 0, 0.06) !important;
+  transform: translateY(-1px);
+}
+
+.jodit-toolbar-button__button.jodit-toolbar-button__button_active {
+  background-color: #e5e7eb !important;
+  color: #111827 !important;
+}
+
+/* Modernize SVG icons */
+.jodit-icon {
+  fill: #4b5563 !important;
+  stroke: transparent !important;
+}
+
+.jodit-toolbar-button__button:hover .jodit-icon {
+  fill: #111827 !important;
+}
+
+/* Jodit Dropdowns and Popups styling */
+.jodit-popup.jodit-popup_active {
+  border-radius: 12px !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+  border: 1px solid rgba(255,255,255,0.8) !important;
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(16px) !important;
+  padding: 8px !important;
+}
+
+.jodit-toolbar-button__trigger {
+  border-left: none !important;
+}
+
+/* Let the editor's writable area stretch correctly */
+.jodit-container:not(.jodit_fullsize) {
+  min-height: 1123px !important;
+  position: relative !important;
+  border: none !important;
+  background-color: #ffffff !important;
+}
+
+/* Simulated MS Word margins (approx 1 inch on sides, flush on top relative to our CSS) */
+.jodit-container:not(.jodit_fullsize) .jodit-workplace {
+  padding: 48px 96px 96px 96px !important; /* Add breathing room below toolbar */
+  min-height: calc(1123px - 136px) !important;
+  border: none !important;
+  outline: none !important;
+  box-sizing: border-box;
+  background-color: #ffffff !important;
+  color: #111827 !important;
+}
+
+.jodit-container:not(.jodit_fullsize) .jodit-wysiwyg {
+  padding: 0 !important;
+  margin: 0 !important;
+  min-height: calc(1123px - 136px) !important;
+  border: none !important;
+  outline: none !important;
+  color: #111827 !important;
+  background-color: #ffffff !important;
+  caret-color: #111827 !important;
+}
+
+/* Fix Jodit default paragraph margins creating ghost space at the top */
+.jodit-wysiwyg > p:first-child {
+  margin-top: 0 !important;
+}
+
+/* Hide the status bar completely */
+.jodit-status-bar {
+  display: none !important;
+}
+
+/* Provide a placeholder text color override */
+.jodit-placeholder {
+  color: #a0a0a0 !important;
+}
+
+/* Page Break Styling */
+.custom-page-break {
+  border-top: 2px dashed #4a90e2 !important;
+  height: 0 !important;
+  margin: 40px -96px !important; /* Pull out of the margin padding context */
+  position: relative;
+  page-break-after: always;
+}
+
+.custom-page-break::after {
+  content: 'PAGE BREAK';
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #f0f2f5;
+  color: #4a90e2;
+  padding: 2px 10px;
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  border-radius: 10px;
+}
+
+/* --- Responsive Design for Table, Mobile, Digital Boards --- */
+@media screen and (max-width: 850px) {
+  .word-editor-wrapper {
+    margin: 0;
+    border: none;
+    border-radius: 0;
+  }
+  
+  .jodit-container:not(.jodit_fullsize) .jodit-workplace {
+    padding: 24px 24px 64px 24px !important; /* Smaller margins for smaller screens */
+  }
+  
+  .custom-page-break {
+    margin: 40px -24px !important; /* Adjust page break negative margin */
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .jodit-container:not(.jodit_fullsize) .jodit-workplace {
+    padding: 16px 12px 64px 12px !important; /* Maximize writing space on phones */
+  }
+  
+  .custom-page-break {
+    margin: 40px -12px !important; 
+  }
+  
+  /* Match the mobile header's height (52px + 1px border) */
+  .jodit-container:not(.jodit_fullsize) .jodit-toolbar__box {
+    top: 53px !important; 
+  }
+}
+
+/* Enable Drag and Drop Image Resizer on Mobile */
+.jodit-wysiwyg img { 
+  touch-action: none !important; 
+  pointer-events: auto !important; 
+}
+.jodit-resizer, .jodit-resizer * { 
+  touch-action: none !important; 
+}
+
+/* --- Editable Branding UI --- */
+.print-only {
+  display: none;
+}
+.screen-only {
+  display: block;
+}
+
+.screen-watermark-img {
+  position: absolute;
+  top: 250px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 500px;
+  height: auto;
+  object-fit: contain;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* --- Native Browser Printing Styles --- */
+@media print {
+  @page {
+    margin: 1cm;
+    size: A4 portrait;
+  }
+  
+  html, body, #root, .ms-word-app-shell {
+    background: white !important;
+    background-color: white !important;
+    background-image: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: auto !important;
+    min-height: 100% !important;
+    position: static !important;
+    overflow: visible !important;
+    display: block !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+  
+  .jodit-wysiwyg * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+  
+  /* OVERRIDE the highly specific toolbar rule to hide it */
+  .jodit-container:not(.jodit_fullsize) .jodit-toolbar__box,
+  .jodit-toolbar-container,
+  .jodit-toolbar,
+  .jodit-workplace-toolbar,
+  .ms-word-header, 
+  .autosave-indicator {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+  }
+  
+  /* Remove scroll areas and background paddings */
+  .word-editor-scroll-area {
+    
+    padding: 0 !important;
+    margin: 0 !important;
+    background: white !important;
+    overflow: visible !important;
+    display: block !important;
+    position: static !important;
+    height: auto !important;
+  }
+
+  
+
+  /* Make the A4 wrapper the actual print page without shadows/borders */
+  .word-editor-wrapper {
+    box-shadow: none !important;
+    border: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+    position: static !important;
+    overflow: visible !important;
+  }
+
+  /* Reset Jodit container constraints */
+  .jodit-container:not(.jodit_fullsize) {
+    min-height: 0 !important;
+    border: none !important;
+  }
+  
+  .jodit-container:not(.jodit_fullsize) .jodit-workplace {
+    min-height: 0 !important;
+    padding: 0 !important; /* The physical paper provides the margins */
+    border: none !important;
+  }
+
+  .jodit-container:not(.jodit_fullsize) .jodit-wysiwyg {
+    min-height: 0 !important;
+    padding: 0 !important;
+  }
+  
+  /* --- Print Branding --- */
+  .screen-only {
+    display: none !important;
+  }
+  
+  .print-only {
+    display: block !important;
+    position: fixed;
+    width: 100%;
+    text-align: center;
+    color: #9ca3af;
+    font-size: 11px;
+    z-index: -1;
+    font-family: sans-serif;
+  }
+  
+  .print-header {
+    top: 1cm;
+    left: 0;
+  }
+  
+  .print-footer {
+    bottom: 1cm;
+    left: 0;
+  }
+  
+  .print-watermark {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+    font-size: 80px;
+    opacity: 0.05;
+    color: #000;
+    z-index: -2;
+    white-space: nowrap;
+    text-transform: uppercase;
+    font-weight: bold;
+  }
+  
+  .print-watermark-img {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 60%; 
+    height: auto;
+    object-fit: contain;
+    transform: translate(-50%, -50%);
+    z-index: -2;
+    pointer-events: none;
+  }
+}

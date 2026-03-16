@@ -30,7 +30,7 @@ export const analyzeDocument = (file) => {
  * @returns {Promise} Document data
  */
 export const getDocument = async (documentId) => {
-  return API.get(`/document/get-by-id/${documentId}`);
+  return API.get(`/document/${documentId}`);
 };
 /**
  * Update document content
