@@ -1,0 +1,53 @@
+/* TextEditorFinal.css */
+
+.main-content {
+  margin-top: 70px; /* header height ke according adjust karo */
+  padding: 20px;
+}
+
+.editor-container {
+  margin-bottom: 30px;
+}
+
+.preview-container {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  background: #e5e5e5;
+}
+
+/* A4 Page */
+.a4-page {
+  width: 210mm;
+  min-height: 297mm;
+  background: white;
+  padding: 20mm;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  overflow: visible; /* IMPORTANT */
+  word-break: break-word;
+}
+
+.preview-container p {
+  border: none !important;
+}
+
+.preview-container {
+  border: none;
+}
+
+
+
+
+.math-field {
+  min-width: 50px;
+  padding: 4px;
+  border-radius: 4px;
+  background: #f8f8f8;
+  cursor: pointer;
+}
+
+.math-field:focus {
+  outline: 2px solid #4da6ff;
+  background: #ffffff;
+}
+

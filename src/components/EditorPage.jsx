@@ -108,7 +108,7 @@ const EditorPage = () => {
                     state: res.data
                 });
             } else {
-                navigate(`/word-editor/${documentId}`, {
+                navigate(`/text-editor/${documentId}`, {
                     state: res.data
                 });
             }

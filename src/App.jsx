@@ -19,6 +19,8 @@ import NexGenV7 from './preview/SlideCanvas';
 import DocumentList from './components/DocumentList';
 import FabricEditor from './components/FrabicEditor';
 import WordEditor from './components/wordEditor/WordEditor';
+import TextEditor from './components/wordEditor/TextEditor';
+import TextEditorFinal from './components/wordEditor/TextEditorFinal';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -65,6 +67,8 @@ function App() {
     return <AuthScreen onLogin={handleLogin} />;
   }
 
+  
+
   return (
     <div className="h-screen overflow-hidden flex flex-col">
       {maintenanceMode && (
@@ -82,6 +86,8 @@ function App() {
         <Route path="/pptxcanvas" element={<NexGenV7 />} />
         <Route path="/fabric-editor/:documentId" element={<FabricEditor />} />
         <Route path="/word-editor/:documentId" element={<WordEditor />} />
+        <Route path="/test-editor/:documentId" element={<TextEditor />} />
+        <Route path="/text-editor/:documentId" element={<TextEditorFinal />} />
 
         <Route path="*" element={
           <div className="flex-1 flex h-full">
