@@ -17,7 +17,7 @@
 //       try {
 //         const res = await getDocument(documentId);
 //         console.log("Fetched document:", res?.data);
-        
+
 //         // assuming response like: { A4content: "<p>data</p>" }
 //         setContent(res?.data?.A4content || "");
 //       } catch (error) {
@@ -72,7 +72,13 @@
 
 // export default TextEditorFinal;
 
-import React, { useState, useRef, useMemo, useCallback, useEffect } from "react";
+import React, {
+  useState,
+  useRef,
+  useMemo,
+  useCallback,
+  useEffect,
+} from "react";
 import { useParams } from "react-router-dom";
 import JoditEditor from "jodit-react";
 import "./TextEditorFinal.css";
@@ -86,7 +92,12 @@ const loadMathJax = () => {
     window.MathJax = {
       tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] },
       svg: { fontCache: "global" },
-      startup: { ready() { window.MathJax.startup.defaultReady(); resolve(); } },
+      startup: {
+        ready() {
+          window.MathJax.startup.defaultReady();
+          resolve();
+        },
+      },
     };
 
     const script = document.createElement("script");
@@ -107,13 +118,15 @@ const renderMath = (node) => {
 const TextEditorFinal = () => {
   const { documentId } = useParams();
   const editor = useRef(null);
-  const previewRef = useRef(null);   // ← preview div ka ref
+  const previewRef = useRef(null); // ← preview div ka ref
 
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(true);
 
   // MathJax ek baar load karo
-  useEffect(() => { loadMathJax(); }, []);
+  useEffect(() => {
+    loadMathJax();
+  }, []);
 
   // Document fetch karo
   useEffect(() => {
@@ -147,22 +160,25 @@ const TextEditorFinal = () => {
     return () => clearTimeout(timer);
   }, [content]);
 
-  const config = useMemo(() => ({
-    readonly: false,
-    placeholder: "Start typing...",
-    height: 500,
-    // MathJax CDN Jodit ke andar bhi inject karo
-    extraCSS: "",
-    iframe: true, // optional: true ho to alag inject karna padega
-    events: {
-      afterSetValue() {
-        // Jodit content set hone ke baad math render
-        setTimeout(() => {
-          if (this.workplace) renderMath(this.workplace);
-        }, 300);
+  const config = useMemo(
+    () => ({
+      readonly: false,
+      placeholder: "Start typing...",
+      height: 500,
+      // MathJax CDN Jodit ke andar bhi inject karo
+      extraCSS: "",
+      iframe: true, // optional: true ho to alag inject karna padega
+      events: {
+        afterSetValue() {
+          // Jodit content set hone ke baad math render
+          setTimeout(() => {
+            if (this.workplace) renderMath(this.workplace);
+          }, 300);
+        },
       },
-    },
-  }), []);
+    }),
+    [],
+  );
 
   const handleBlur = useCallback((newContent) => {
     setContent(newContent);
@@ -188,10 +204,7 @@ const TextEditorFinal = () => {
       {/* ── Preview: ref lagao taaki MathJax yahan render kare ── */}
       <div className="preview-container">
         <h2>Preview:</h2>
-        <div
-          ref={previewRef}
-          dangerouslySetInnerHTML={{ __html: content }}
-        />
+        <div ref={previewRef} dangerouslySetInnerHTML={{ __html: content }} />
       </div>
     </div>
   );

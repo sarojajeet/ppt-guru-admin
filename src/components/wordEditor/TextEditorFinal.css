@@ -6,24 +6,40 @@
 }
 
 .editor-container {
-  margin-bottom: 30px;
+  background: white;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 25px;
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Override Jodit */
+.jodit-container {
+  min-height: 500px !important;
+}
+
+.jodit-workplace {
+  min-height: 400px !important;
+  max-height: none !important;
 }
 
 .preview-container {
   display: flex;
   justify-content: center;
-  padding: 20px;
-  background: #e5e5e5;
 }
 
-/* A4 Page */
 .a4-page {
   width: 210mm;
   min-height: 297mm;
+
   background: white;
   padding: 20mm;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  overflow: visible; /* IMPORTANT */
+
+  border-radius: 6px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+
+  overflow: visible;
   word-break: break-word;
 }
 
@@ -35,19 +51,62 @@
   border: none;
 }
 
-
-
-
 .math-field {
-  min-width: 50px;
-  padding: 4px;
+  user-select: none;
+  min-width: 40px;
+  padding: 3px 6px;
+
   border-radius: 4px;
-  background: #f8f8f8;
+  background: #f1f5f9;
+
   cursor: pointer;
 }
 
 .math-field:focus {
-  outline: 2px solid #4da6ff;
+  outline: 2px solid #3b82f6;
   background: #ffffff;
 }
 
+.page-wrapper {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Sticky Top Bar */
+.top-bar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 12px 20px;
+  background: #0f172a;
+  color: white;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.content-area {
+  flex: 1;
+  overflow-y: auto; /* 🔥 Enables scrolling */
+  padding: 20px;
+  background: #f1f5f9;
+}
+
+.export-btn {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.export-btn:hover {
+  background: #1d4ed8;
+}
