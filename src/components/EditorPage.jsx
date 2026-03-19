@@ -108,7 +108,7 @@ const EditorPage = () => {
                     state: res.data
                 });
             } else {
-                navigate(`/text-editor/${documentId}`, {
+                navigate(`/a4-editor/${documentId}`, {
                     state: res.data
                 });
             }

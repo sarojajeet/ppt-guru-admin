@@ -1,0 +1,84 @@
+/* Background like Word */
+.editor-container {
+  background: #f3f3f3;
+  min-height: 100vh;
+  overflow-y: auto;   /* ✅ IMPORTANT */
+}
+
+/* Toolbar fix */
+.jodit-toolbar__box {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background: white;
+  border-bottom: 1px solid #ddd;
+  padding: 8px 0;
+}
+
+/* Wrapper to push content BELOW toolbar */
+.editor-wrapper {
+  display: flex;
+  justify-content: center;
+  padding-top: 80px;   /* 🔥 THIS FIXES OVERLAP */
+}
+
+/* A4 page */
+.jodit-container {
+  width: 794px !important;
+  min-height: 1123px !important;
+  background: white !important;
+  padding: 40px 60px !important;
+  box-shadow: 0 0 10px rgba(0,0,0,0.15);
+  border-radius: 4px;
+}
+
+/* Clean editor content */
+.jodit-wysiwyg {
+  font-family: "Times New Roman", serif;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Force visible text in Jodit editor content */
+.jodit-wysiwyg,
+.jodit-wysiwyg p,
+.jodit-wysiwyg span,
+.jodit-wysiwyg div,
+.jodit-wysiwyg li,
+.jodit-wysiwyg td,
+.jodit-wysiwyg h1,
+.jodit-wysiwyg h2,
+.jodit-wysiwyg h3 {
+  color: #000000 !important;
+}
+
+/* Isolate math-field from affecting surrounding layout */
+math-field {
+  display: inline-block !important;
+  vertical-align: middle;
+  --math-field-color: #000000;
+  color: #000000 !important;
+}
+
+/* Prevent MathLive shadow DOM styles from leaking */
+.jodit-wysiwyg {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+
+
+.math-field {
+  min-width: 50px;
+  padding: 4px;
+  border-radius: 4px;
+  background: #f8f8f8;
+  cursor: pointer;
+}
+
+.math-field:focus {
+  outline: 2px solid #4da6ff;
+  background: #ffffff;
+}

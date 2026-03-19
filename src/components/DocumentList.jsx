@@ -149,6 +149,12 @@ const DocumentList = () => {
                                     >
                                         <i className="ri-presentation-fill"></i>
                                     </button>
+                                    <button
+                                        onClick={() => navigate(`/a4-editor/${doc._id}`)}
+                                        className="w-10 h-10 bg-slate-800 hover:bg-orange-500/20 text-slate-400 hover:text-orange-400 border border-white/5 hover:border-orange-500/30 rounded-xl transition-all flex items-center justify-center"
+                                    >
+                                        <i className="ri-file-text-fill"></i>
+                                    </button>
                                 </div>
                             </div>
                         ))}
