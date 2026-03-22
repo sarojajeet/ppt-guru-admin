@@ -12,19 +12,49 @@ const applyEditorColumns = (root, count) => {
   const normalizedCount = Math.max(1, count);
   root.dataset.columnCount = String(normalizedCount);
   root.classList.toggle('jodit-multi-column-layout', normalizedCount > 1);
-  root.style.columnCount = String(normalizedCount);
-  root.style.columnGap = normalizedCount > 1 ? '40px' : '0';
-  root.style.columnFill = normalizedCount > 1 ? 'balance' : '';
-
+root.style.columnCount = normalizedCount;
+root.style.columnGap = normalizedCount > 1 ? '40px' : '0';
+root.style.columnFill = normalizedCount > 1 ? 'balance' : 'auto';
   if (normalizedCount > 1) {
     return wrapTablesForColumns(root);
   }
 
   return unwrapTablesForSingleColumn(root);
 };
-const wrapTablesForColumns = (root) => {
+const cleanupEmptyColumnTableWrappers = (root) => {
   if (!root) return false;
 
+  let changed = false;
+
+  root.querySelectorAll('.column-table-wrapper').forEach((wrapper) => {
+    // If wrapper has no table inside, remove it
+    if (!wrapper.querySelector('table')) {
+      wrapper.remove();
+      changed = true;
+    }
+  });
+
+  return changed;
+};
+const unwrapTablesForSingleColumn = (root) => {
+  if (!root) return false;
+
+  let changed = false;
+
+  root.querySelectorAll('.column-table-wrapper').forEach((wrapper) => {
+    const table = wrapper.querySelector('table');
+    if (table) {
+      wrapper.parentNode.insertBefore(table, wrapper);
+    }
+    wrapper.remove();
+    changed = true;
+  });
+
+  return changed;
+};
+const wrapTablesForColumns = (root) => {
+  if (!root) return false;
+const COLUMN_TABLE_WRAPPER_CLASS = "column-table-wrapper";
   let changed = cleanupEmptyColumnTableWrappers(root);
   root.querySelectorAll('table').forEach((table) => {
     if (table.closest(`.${COLUMN_TABLE_WRAPPER_CLASS}`)) {
@@ -48,7 +78,7 @@ const TextEditor = () => {
   const [footerText, setFooterText] = useState("Powered by SlideGuru");
   const [watermarkText, setWatermarkText] = useState("SLIDEGURU");
   const [saveStatus, setSaveStatus] = useState('Saved to cloud ☁️'); 
-
+const [columnCount, setColumnCount] = useState(1);
    const [watermarkImage, setWatermarkImage] = useState("");
   const [watermarkOpacity, setWatermarkOpacity] = useState(0.1);
 
@@ -57,18 +87,7 @@ const TextEditor = () => {
     stateRef.current = { headerText, footerText, watermarkText, watermarkImage, watermarkOpacity, setSaveStatus };
   }, [headerText, footerText, watermarkText, watermarkImage, watermarkOpacity, setSaveStatus]);
 
-    const getWatermarkStyle = () => {
-    if (watermarkImage) {
-      return {}; 
-    }
-    if (!watermarkText) return { backgroundImage: 'none' };
-    
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="794" height="1123" viewBox="0 0 794 1123">
-      <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="80" fill="rgba(0,0,0,0.04)" transform="rotate(-45, 397, 561)">${watermarkText}</text>
-    </svg>`;
-    return { backgroundImage: `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")` };
-  };
-
+   
 
     const [content, setContent] = useState("");
   const [loading, setLoading] = useState(true);
@@ -110,41 +129,62 @@ const TextEditor = () => {
     return div.innerHTML;
   };
 
-    // Handle insert math
-  const insertMath = () => {
-    if (!editor.current) return;
 
-    const latex = "x^2";
 
-    editor.current.selection.insertHTML(
-      `<math-field class="math-field">${latex}</math-field>`
-    );
-  };
+// const handleExportPDF = useCallback(async () => {
+//   try {
+//     if (!editor.current) return;
 
-const handleExportPDF = async () => {
+//     const rawHTML =
+//       editor.current?.value ||
+//       editor.current?.editor?.innerHTML ||
+//       "";
+
+//     const latexContent = convertMathLiveToLatex(rawHTML);
+
+//     const response = await fetch("http://localhost:8080/api/document/export-pdf", {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({ content: latexContent }),
+//     });
+
+//     const blob = await response.blob();
+
+//     const url = window.URL.createObjectURL(blob);
+//     const a = document.createElement("a");
+//     a.href = url;
+//     a.download = "document.pdf";
+//     document.body.appendChild(a);
+//     a.click();
+//     a.remove();
+//   } catch (err) {
+//     console.error("PDF export failed", err);
+//   }
+// }, []);
+const handleExportPDF = useCallback(async () => {
   try {
     if (!editor.current) return;
 
-    // ✅ Correct way to access editor content
-    const rawHTML = editor.current.editor?.value || content;
+    const rawHTML =
+      editor.current?.value ||
+      editor.current?.editor?.innerHTML ||
+      "";
 
     const latexContent = convertMathLiveToLatex(rawHTML);
 
-    const response = await fetch(
-      "https://lionfish-app-pk8s6.ondigitalocean.app/api/document/export-pdf",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          content: latexContent,
-        }),
-      }
-    );
+    // ✅ Read column count from the editor's DOM
+    // const wysiwyg = editor.current?.editor;
+    // const columnCount = parseInt(wysiwyg?.dataset?.columnCount || "1", 10);
+
+    const response = await fetch("http://localhost:8080/api/document/export-pdf", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content: latexContent, columnCount:2 }), // ✅ send it
+    });
 
     const blob = await response.blob();
-
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -155,16 +195,14 @@ const handleExportPDF = async () => {
   } catch (err) {
     console.error("PDF export failed", err);
   }
-};
- const config = useMemo(() => ({
+}, []); 
+
+const config = useMemo(() => ({
   readonly: false,
   // placeholder: "Start typing...",
   height: "auto",
   width: '100%',
- style: {
-    color: "#000000",         // 🔥 forces text color in editor body
-    backgroundColor: "#ffffff",
-  },
+
   toolbarAdaptive: false,   // ❗ IMPORTANT
   buttons: [
     "bold",
@@ -208,15 +246,19 @@ const handleExportPDF = async () => {
           div.querySelectorAll('.col-btn').forEach(btn => {
             btn.addEventListener('mouseenter', e => e.target.style.backgroundColor = '#f3f4f6');
             btn.addEventListener('mouseleave', e => e.target.style.backgroundColor = 'transparent');
-            btn.addEventListener('click', (e) => {
-               const val = Number.parseInt(e.target.getAttribute('data-val') || '1', 10);
-               const wysiwyg = editor.editor; // Note: editor instance object has an 'editor' property for the div
-               if (!wysiwyg) return;
+           btn.addEventListener('click', (e) => {
+  const val = Number.parseInt(e.target.getAttribute('data-val') || '1', 10);
 
-               applyEditorColumns(wysiwyg, val);
-               editor.events.fire('change');
-               close();
-            });
+  const wysiwyg = editor.editor;
+  if (!wysiwyg) return;
+
+  applyEditorColumns(wysiwyg, val);
+
+  setColumnCount(val); // ✅ STORE VALUE HERE
+
+  editor.events.fire('change');
+  close();
+});
           });
           
           return div;

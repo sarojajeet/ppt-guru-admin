@@ -34,25 +34,7 @@
   border-radius: 4px;
 }
 
-/* Clean editor content */
-.jodit-wysiwyg {
-  font-family: "Times New Roman", serif;
-  font-size: 16px;
-  line-height: 1.6;
-}
 
-/* Force visible text in Jodit editor content */
-.jodit-wysiwyg,
-.jodit-wysiwyg p,
-.jodit-wysiwyg span,
-.jodit-wysiwyg div,
-.jodit-wysiwyg li,
-.jodit-wysiwyg td,
-.jodit-wysiwyg h1,
-.jodit-wysiwyg h2,
-.jodit-wysiwyg h3 {
-  color: #000000 !important;
-}
 
 /* Isolate math-field from affecting surrounding layout */
 math-field {
@@ -64,12 +46,46 @@ math-field {
 
 /* Prevent MathLive shadow DOM styles from leaking */
 .jodit-wysiwyg {
-  color: #000000 !important;
-  -webkit-text-fill-color: #000000 !important;
+  color: #000000 ;
 }
 
 
+/* Fix bullet & ordered list visibility in Jodit editor */
+.jodit-wysiwyg ul,
+.jodit-wysiwyg ol {
+  display: block !important;
+  list-style: revert !important;
+  margin: 0.5em 0 !important;
+  padding-left: 2em !important;  /* 🔥 Key fix — gives space for markers */
+}
 
+.jodit-wysiwyg ul {
+  list-style-type: disc !important;
+}
+
+.jodit-wysiwyg ol {
+  list-style-type: decimal !important;
+}
+
+.jodit-wysiwyg li {
+  display: list-item !important;
+  list-style: revert !important;
+}
+.jodit-multi-column-layout img,
+.jodit-multi-column-layout table,
+.jodit-multi-column-layout .column-table-wrapper,
+.jodit-multi-column-layout math-field,
+.jodit-multi-column-layout p {
+  break-inside: avoid;
+  page-break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+}
+.column-table-wrapper {
+  break-inside: avoid;
+  page-break-inside: avoid;
+  width: 100%;
+  display: block;
+}
 .math-field {
   min-width: 50px;
   padding: 4px;
