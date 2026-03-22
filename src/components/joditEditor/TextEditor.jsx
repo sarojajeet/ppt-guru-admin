@@ -178,7 +178,7 @@ const handleExportPDF = useCallback(async () => {
     // const wysiwyg = editor.current?.editor;
     // const columnCount = parseInt(wysiwyg?.dataset?.columnCount || "1", 10);
 
-    const response = await fetch("http://localhost:8080/api/document/export-pdf", {
+    const response = await fetch("https://lionfish-app-pk8s6.ondigitalocean.app/api/document/export-pdf", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ content: latexContent, columnCount:2 }), // ✅ send it
