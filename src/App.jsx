@@ -23,10 +23,11 @@ import EditorPage from "./components/EditorPage";
 import PPTEditor from "./components/PPTEditor";
 import NexGenV7 from "./preview/SlideCanvas";
 import DocumentList from "./components/DocumentList";
-import FabricEditor from "./components/FrabicEditor";
+
 // import WordEditor from "./components/wordEditor/WordEditor";
 // import TextEditorFinal from "./components/wordEditor/TextEditorFinal";
 import TextEditor from "./components/joditEditor/TextEditor";
+import FabricEditor from "./components/editor/FabricEditor";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
