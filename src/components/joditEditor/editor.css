@@ -5,18 +5,20 @@
   overflow-y: auto;   /* ✅ IMPORTANT */
 }
 
-/* Toolbar fix */
 .jodit-toolbar__box {
   position: fixed !important;
   top: 0;
   left: 0;
-  width: 100%;
+  right: 0;              /* ✅ ADD THIS */
+  width: 100vw !important; /* ✅ FORCE FULL SCREEN */
   z-index: 1000;
   background: white;
   border-bottom: 1px solid #ddd;
   padding: 8px 0;
-}
 
+  display: flex;
+  justify-content: center; /* center toolbar content */
+}
 /* Wrapper to push content BELOW toolbar */
 .editor-wrapper {
   display: flex;

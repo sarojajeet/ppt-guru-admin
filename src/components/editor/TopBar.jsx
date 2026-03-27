@@ -5,7 +5,7 @@ const TopBar = memo(function TopBar({
     onBack,
     activeIndex, totalSlides,
     onPrevSlide, onNextSlide,
-    onPresent, onExportPPTX,
+    onPresent, onExportPPTX,onExportPDF,
     onServerGenerate, isGenerating,
     isMobile, isTablet, isMobileOrTablet,
 }) {
@@ -96,7 +96,7 @@ const TopBar = memo(function TopBar({
                     <>
                         <div style={{ width: 1, height: 24, background: 'var(--nn-border)', margin: '0 4px', flexShrink: 0 }} />
 
-                        <button onClick={() => onServerGenerate('ppt')} disabled={isGenerating} title="Generate PPT on server"
+                        <button onClick={onExportPDF} disabled={isGenerating} title="Generate PPT on server"
                             className="nn-toolbar-btn"
                             style={{
                                 display: 'flex', alignItems: 'center', gap: isTablet ? 0 : 6,
@@ -110,7 +110,7 @@ const TopBar = memo(function TopBar({
                             onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--nn-border)'; e.currentTarget.style.background = 'transparent'; }}>
                             <Icon icon="fa-solid:file-powerpoint" width={14} height={14} /> {!isTablet && (isGenerating ? '...' : 'PPT')}
                         </button>
-                        <button onClick={() => onServerGenerate('pdf')} disabled={isGenerating} title="Generate PDF on server"
+                        <button onClick={onExportPDF} disabled={isGenerating} title="Generate PDF on server"
                             className="nn-toolbar-btn"
                             style={{
                                 display: 'flex', alignItems: 'center', gap: isTablet ? 0 : 6,

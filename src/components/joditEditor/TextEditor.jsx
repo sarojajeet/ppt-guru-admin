@@ -2,7 +2,9 @@ import React, { useRef, useMemo, useCallback, useState, useEffect } from "react"
 import "./editor.css";
 
 import { useParams } from "react-router-dom";
-import JoditEditor from "jodit-react";
+import JoditEditor from 'jodit-pro-react'; // ← Pro version
+import 'jodit/es2021/jodit.min.css';
+// import "jodit-pro/es2021/jodit.min.css";
 import "katex/dist/katex.min.css";
 import "mathlive";
 import { getDocument } from "@/services/api";
@@ -130,39 +132,6 @@ const [columnCount, setColumnCount] = useState(1);
   };
 
 
-
-// const handleExportPDF = useCallback(async () => {
-//   try {
-//     if (!editor.current) return;
-
-//     const rawHTML =
-//       editor.current?.value ||
-//       editor.current?.editor?.innerHTML ||
-//       "";
-
-//     const latexContent = convertMathLiveToLatex(rawHTML);
-
-//     const response = await fetch("http://localhost:8080/api/document/export-pdf", {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({ content: latexContent }),
-//     });
-
-//     const blob = await response.blob();
-
-//     const url = window.URL.createObjectURL(blob);
-//     const a = document.createElement("a");
-//     a.href = url;
-//     a.download = "document.pdf";
-//     document.body.appendChild(a);
-//     a.click();
-//     a.remove();
-//   } catch (err) {
-//     console.error("PDF export failed", err);
-//   }
-// }, []);
 const handleExportPDF = useCallback(async () => {
   try {
     if (!editor.current) return;
@@ -174,14 +143,10 @@ const handleExportPDF = useCallback(async () => {
 
     const latexContent = convertMathLiveToLatex(rawHTML);
 
-    // ✅ Read column count from the editor's DOM
-    // const wysiwyg = editor.current?.editor;
-    // const columnCount = parseInt(wysiwyg?.dataset?.columnCount || "1", 10);
-
     const response = await fetch("https://lionfish-app-pk8s6.ondigitalocean.app/api/document/export-pdf", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content: latexContent, columnCount:2 }), // ✅ send it
+      body: JSON.stringify({ content: latexContent, columnCount:1 }), // ✅ send it
     });
 
     const blob = await response.blob();
@@ -202,32 +167,17 @@ const config = useMemo(() => ({
   // placeholder: "Start typing...",
   height: "auto",
   width: '100%',
-
+license:'e5fb6af5-5f57-4d85-9264-3dced3379a60',
   toolbarAdaptive: false,   // ❗ IMPORTANT
   buttons: [
-    "bold",
-    "italic",
-
-    "underline",
-
-    "|",
-    "ul",
-    "ol",
-    "|",
-    "font",
-    "fontsize",
-    "brush",
-    "|",
-    "image",
-    "link",
-    "|",
-    "align",
-    "undo",
-    "redo",
-    'columns',
-    'branding',
-    "exportPDF" // ✅ add here
-  ],
+      'bold', 'italic', 'underline', 'strikethrough', 'eraser', '|',
+      'ul', 'ol', 'indent', 'outdent', '|',
+      'font', 'fontsize', 'paragraph', '|',
+      'brush', 'color', '|',
+      'align', 'table', 'link', 'image', 'hr', '|',
+      'undo', 'redo', '|',
+      'branding', 'fullsize', 'print', 'exportPDF', 'columns', 'pageBreak',
+    ],
 
   controls:{
     columns: {
@@ -377,14 +327,6 @@ const config = useMemo(() => ({
   },
 }), [handleExportPDF]);
 
-  // const handleBlur = useCallback(
-  //   (newContent) => {
-  //     onChange(newContent);
-  //   },
-  //   [onChange]
-  // );
-
-    // Handle blur → save content
   const handleBlur = (newContent) => {
     const latexContent = convertMathLiveToLatex(newContent);
     setContent(latexContent);
@@ -415,54 +357,7 @@ useEffect(() => {
 
   enableEditing();
 }, [content]);
-// const handleExportPDF = async () => {
-//   try {
-//     if (!editor.current) return;
 
-//     // Get current HTML from editor
-//     const rawHTML = editor.current.value;
-
-//     // Convert math-field → LaTeX
-//     const latexContent = convertMathLiveToLatex(rawHTML);
-
-//     const response = await fetch(
-//       "https://lionfish-app-pk8s6.ondigitalocean.app/api/document/export-pdf",
-//       {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({
-//           content: latexContent, // ✅ send correct format
-//           headerText,
-//           footerText,
-//           watermarkText,
-//           watermarkImage,
-//           watermarkOpacity,
-//         }),
-//       }
-//     );
-
-//     if (!response.ok) {
-//       throw new Error("Failed to generate PDF");
-//     }
-
-//     const blob = await response.blob();
-
-//     const url = window.URL.createObjectURL(blob);
-//     const a = document.createElement("a");
-//     a.href = url;
-//     a.download = "document.pdf";
-//     document.body.appendChild(a);
-//     a.click();
-//     a.remove();
-
-//     window.URL.revokeObjectURL(url);
-
-//   } catch (err) {
-//     console.error("PDF export failed", err);
-//   }
-// };
 
 
   if (loading) return <p>Loading...</p>;
@@ -483,3 +378,4 @@ useEffect(() => {
 };
 
 export default TextEditor;
+

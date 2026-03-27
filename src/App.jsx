@@ -29,6 +29,9 @@ import DocumentList from "./components/DocumentList";
 import TextEditor from "./components/joditEditor/TextEditor";
 import FabricEditor from "./components/editor/FabricEditor";
 
+// import FabricEditor from "./components/editor/FabricEditor";
+
+
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [maintenanceMode, setMaintenanceMode] = useState(false);
@@ -151,7 +154,8 @@ function App() {
         <Route path="/pptxcanvas" element={<NexGenV7 />} />
         <Route path="/fabric-editor/:documentId" element={<FabricEditor />} />
         <Route path="/a4-editor/:documentId" element={<TextEditor />} />
-    
+      
+  
 
         <Route
           path="*"

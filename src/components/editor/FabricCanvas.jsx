@@ -136,6 +136,7 @@ const FabricCanvas = memo(function FabricCanvas({
     onSelectElement, onStartEdit, onEditDone, onUpdateElement, onEditorReady, onDirectUpdateRef,
     isMobile,
 }) {
+    console.log(slide)
     const wrapperRef = useRef(null);
     const fabricContainerRef = useRef(null);  // opaque div Fabric owns
     const fcRef = useRef(null);               // fabric.Canvas instance

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  // baseURL: "http://localhost:5000/api",
+  // baseURL: "http://localhost:8080/api",
 
   baseURL: "https://lionfish-app-pk8s6.ondigitalocean.app/api",
 });
@@ -20,7 +20,7 @@ export const loginAdmin = (credentials) => {
 
 export const analyzeDocument = (file) => {
   const formData = new FormData();
-  formData.append("files", file);
+  formData.append("file", file);
   return API.post("/document/analyze-admin", formData);
 };
 

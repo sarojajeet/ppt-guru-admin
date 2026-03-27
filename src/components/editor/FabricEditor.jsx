@@ -22,10 +22,10 @@ import TopBar from './TopBar';
 import LeftIconBar from './LeftIconBar';
 import LeftDrawerPanel from './LeftDrawerPanel';
 import FabricContextToolbar from './FabricContextToolbar';
-import FabricCanvas from './FabricCanvas';
 import StatusBar from './StatusBar';
 import PresentMode from './PresentMode';
 import { getDocument } from '@/services/api';
+import FabricCanvas from './FabricCanvas';
 
 export default function FabricEditor() {
     const { documentId } = useParams();
@@ -96,7 +96,7 @@ export default function FabricEditor() {
         setLoading(true);
         try {
             const doc = await getDocument(documentId);
-            const raw = doc?.data?.content || doc.aiContent || null;
+            const raw = doc?.data?.slideData || doc.aiContent || null;
             console.log('[FabricEditor] Loaded document:', { doc, raw });
             const parsed = parseSlides(raw);
             setSlides(parsed);
@@ -386,6 +386,27 @@ async function handleServerGenerate(format) {
         setIsGenerating(false);
     }
 }
+
+// const handleServerGenerate = async () => {
+//     try {
+//         const res = await fetch('http://localhost:8080/api/export-pdf', {
+//             method: 'POST',
+//             headers: { 'Content-Type': 'application/json' },
+//             body: JSON.stringify({ slides }) // your slide state
+//         });
+
+//         const blob = await res.blob();
+//         const url = window.URL.createObjectURL(blob);
+
+//         const a = document.createElement('a');
+//         a.href = url;
+//         a.download = 'slides.pdf';
+//         a.click();
+
+//     } catch (err) {
+//         console.error(err);
+//     }
+// };
 
     // ── Loading / Error ──────────────────────────────────────────────────────
     if (loading) {
