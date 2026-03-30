@@ -70,6 +70,8 @@ const AILab = () => {
         setDocumentId(res.data.documentId);
       }
 
+      console.log("OCR Result:", res.data);
+
       // STEP 3: Data Extraction done
       setLoaderProgress(50);
       setLoaderText("AI ANALYZING CONTENT...");
@@ -132,7 +134,7 @@ const AILab = () => {
   };
 
   const renderFromAI = (aiData) => {
-    const docTitle = aiData.title || "Mathematics Problem Set";
+    const docTitle = "Ai Extract Dataction Result";
     let markdown = `# ${docTitle}\n\n`;
 
     aiData.sections.forEach((sec, idx) => {

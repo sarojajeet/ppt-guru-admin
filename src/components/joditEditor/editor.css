@@ -5,6 +5,7 @@
   overflow-y: auto;   /* ✅ IMPORTANT */
 }
 
+
 .jodit-toolbar__box {
   position: fixed !important;
   top: 0;
