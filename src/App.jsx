@@ -29,6 +29,8 @@ import DocumentList from "./components/DocumentList";
 import TextEditor from "./components/joditEditor/TextEditor";
 import FabricEditor from "./components/editor/FabricEditor";
 import ReviewsAdmin from "./components/Reviewsadmin";
+import Transactions from "./components/Transactions";
+import Subscriptions from "./components/Subscriptions";
 
 // import FabricEditor from "./components/editor/FabricEditor";
 
@@ -182,6 +184,13 @@ function App() {
                       path="/plans"
                       element={<Pricing db={db} updateDb={updateDb} />}
                     />
+                    <Route
+                      path="/transactions"
+                      element={<Transactions />}
+                    />
+                    <Route
+                      path="/subscriptions"
+                      element={<Subscriptions />} />
                     <Route
                       path="/reviews"
                       element={<ReviewsAdmin />}
