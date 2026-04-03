@@ -2,7 +2,8 @@ import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 
-const API = "https://lionfish-app-pk8s6.ondigitalocean.app/api/payment/admin/transactions";
+// const API = "https://lionfish-app-pk8s6.ondigitalocean.app/api/payment/admin/transactions";
+const API = "https://seashell-app-98hn3.ondigitalocean.app/api/payment/admin/transactions";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 

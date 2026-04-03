@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 
-const API = "https://lionfish-app-pk8s6.ondigitalocean.app/api/payment/admin/subscriptions";
+const API = "https://seashell-app-98hn3.ondigitalocean.app/api/payment/admin/subscriptions";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 

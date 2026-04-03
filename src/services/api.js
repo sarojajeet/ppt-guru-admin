@@ -3,7 +3,8 @@ import axios from "axios";
 const API = axios.create({
   // baseURL: "http://localhost:8080/api",
 
-  baseURL: "https://lionfish-app-pk8s6.ondigitalocean.app/api",
+  // baseURL: "https://lionfish-app-pk8s6.ondigitalocean.app/api",
+  baseURL: "https://seashell-app-98hn3.ondigitalocean.app/api",
 });
 
 API.interceptors.request.use((req) => {

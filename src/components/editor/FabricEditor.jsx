@@ -354,7 +354,7 @@ async function handleServerGenerate(format) {
     setIsGenerating(true);
 
     try {
-        const response = await fetch('https://lionfish-app-pk8s6.ondigitalocean.app/api/document/export-pdf-slide', {
+        const response = await fetch('https://seashell-app-98hn3.ondigitalocean.app/api/document/export-pdf-slide', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -95,7 +95,7 @@ const TextEditor = () => {
       const latexContent = convertMathLiveToLatex(rawHTML);
 
       const response = await fetch(
-        "https://lionfish-app-pk8s6.ondigitalocean.app/api/document/export-pdf",
+        "https://seashell-app-98hn3.ondigitalocean.app/api/document/export-pdf",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

@@ -3,7 +3,8 @@ import Swal from "sweetalert2";
 import axios from "axios";
 
 // const API = "http://localhost:8080/api/reviews";
-const API = "https://lionfish-app-pk8s6.ondigitalocean.app/api/reviews";
+// const API = "https://lionfish-app-pk8s6.ondigitalocean.app/api/reviews";
+const API = "https://seashell-app-98hn3.ondigitalocean.app/api/reviews";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 const StarRating = ({ rating }) => (
