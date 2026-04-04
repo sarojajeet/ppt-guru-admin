@@ -21,7 +21,7 @@ export const loginAdmin = (credentials) => {
 
 export const analyzeDocument = (file) => {
   const formData = new FormData();
-  formData.append("file", file);
+  formData.append("files", file);
   return API.post("/document/analyze-admin", formData);
 };
 
