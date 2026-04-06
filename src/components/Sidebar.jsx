@@ -9,7 +9,9 @@ const Sidebar = ({ currentPage, navigate, onLogout }) => {
     { id: 'documents', label: 'Doc List', icon: 'ri-file-list-3-line', section: 'Core' },
     { id: 'users', label: 'Users', icon: 'ri-team-fill', section: 'Manage' },
     { id: 'plans', label: 'Pricing', icon: 'ri-vip-crown-2-fill', section: 'Manage' },
+    { id: 'assign-plan', label: 'Assign Plan', icon: 'ri-user-shared-fill', section: 'Manage' },
     { id: 'subscriptions', label: 'Subscriptions', icon: 'ri-shopping-bag-2-fill', section: 'Manage' },
+
     { id: 'transactions', label: 'Transactions', icon: 'ri-money-dollar-circle-fill', section: 'Manage' },
     { id: 'reviews', label: 'Reviews', icon: 'ri-star-line', section: 'Manage' },
     { id: 'system', label: 'System', icon: 'ri-settings-4-fill', section: 'Settings' },

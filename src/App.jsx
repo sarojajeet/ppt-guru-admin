@@ -31,6 +31,7 @@ import FabricEditor from "./components/editor/FabricEditor";
 import ReviewsAdmin from "./components/Reviewsadmin";
 import Transactions from "./components/Transactions";
 import Subscriptions from "./components/Subscriptions";
+import AssignPlan from "./components/Assignplan";
 
 // import FabricEditor from "./components/editor/FabricEditor";
 
@@ -183,6 +184,10 @@ function App() {
                     <Route
                       path="/plans"
                       element={<Pricing db={db} updateDb={updateDb} />}
+                    />
+                    <Route
+                      path="/assign-plan"
+                      element={<AssignPlan db={db} updateDb={updateDb} />}
                     />
                     <Route
                       path="/transactions"
