@@ -47,8 +47,8 @@ export const updateDocument = async (documentId, content) => {
  * Get all documents
  * @returns {Promise} List of documents
  */
-export const getAllDocuments = async () => {
-  return API.get('/document');
+export const getAllDocuments = async (params) => {
+  return API.get('/document', { params });
 };
 
 /**

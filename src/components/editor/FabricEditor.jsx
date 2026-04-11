@@ -27,6 +27,13 @@ import PresentMode from './PresentMode';
 import { getDocument } from '@/services/api';
 import FabricCanvas from './FabricCanvas';
 
+const DEFAULT_THEME = {
+  bg: '#ffffff',
+  text: '#1e293b',
+  accent: '#3b82f6',
+  titleBg: '#f1f5f9',
+  name: 'Default',
+};
 export default function FabricEditor() {
     const { documentId } = useParams();
     const navigate = useNavigate();
@@ -303,52 +310,6 @@ export default function FabricEditor() {
     const handleCloseDrawer = useCallback(() => setActiveTool(null), []);
 
     // ── Export ────────────────────────────────────────────────────────────────
-    const exportPPTX = async () => {
-        const pres = new pptxgen();
-        pres.layout = 'LAYOUT_16x9';
-        slides.forEach(s => {
-            const pptSlide = pres.addSlide();
-            pptSlide.background = { fill: theme.bg.replace('#', '') };
-            s.elements.forEach(el => {
-                const fX = 10 / SLIDE_W;
-                const fY = 5.625 / SLIDE_H;
-                const opts = { x: el.x * fX, y: el.y * fY, w: el.w * fX, h: el.h * fY };
-                if (el.type === 'text') {
-                    const plainText = htmlToPlainText(el.content || '') || (el.content || '');
-                    pptSlide.addText(plainText, {
-                        ...opts, fontSize: (el.fontSize || 24) * 0.75,
-                        fontFace: el.fontFamily || 'Inter',
-                        color: (el.color || theme.text).replace('#', ''),
-                        valign: 'top', wrap: true,
-                    });
-                } else if (el.type === 'image' && el.content) {
-                    pptSlide.addImage({ data: el.content, ...opts });
-                } else if (el.type === 'shape') {
-                    const shapeMap = {
-                        'rectangle': pres.ShapeType ? pres.ShapeType.rect : 'rect',
-                        'rounded-rectangle': pres.ShapeType ? pres.ShapeType.roundRect : 'roundRect',
-                        'circle': pres.ShapeType ? pres.ShapeType.ellipse : 'ellipse',
-                        'triangle': pres.ShapeType ? pres.ShapeType.triangle : 'triangle',
-                        'diamond': pres.ShapeType ? pres.ShapeType.diamond : 'diamond',
-                        'star': pres.ShapeType ? pres.ShapeType.star5 : 'star5',
-                        'line': pres.ShapeType ? pres.ShapeType.line : 'line',
-                        'arrow': pres.ShapeType ? pres.ShapeType.rightArrow : 'rightArrow',
-                    };
-                    const pptShape = shapeMap[el.shapeType] || shapeMap['rectangle'];
-                    try {
-                        pptSlide.addShape(pptShape, {
-                            ...opts,
-                            fill: { color: (el.fill || '#4da6ff').replace('#', '').substring(0, 6) },
-                            line: { color: (el.stroke || '#4da6ff').replace('#', ''), width: el.strokeWidth || 2 },
-                        });
-                    } catch {
-                        // Fallback: skip shape if pptxgenjs doesn't support it
-                    }
-                }
-            });
-        });
-        await pres.writeFile({ fileName: `NeuralNotes-${Date.now()}.pptx` });
-    };
 
 async function handleServerGenerate(format) {
     setIsGenerating(true);
@@ -387,26 +348,63 @@ async function handleServerGenerate(format) {
     }
 }
 
-// const handleServerGenerate = async () => {
-//     try {
-//         const res = await fetch('http://localhost:8080/api/export-pdf', {
-//             method: 'POST',
-//             headers: { 'Content-Type': 'application/json' },
-//             body: JSON.stringify({ slides }) // your slide state
-//         });
+async function handleServerGeneratePPT() {
+    setIsGenerating(true);
 
-//         const blob = await res.blob();
-//         const url = window.URL.createObjectURL(blob);
+    try {
+        // ✅ Get latest document (optional if already loaded)
+        const doc = await getDocument(documentId);
 
-//         const a = document.createElement('a');
-//         a.href = url;
-//         a.download = 'slides.pdf';
-//         a.click();
+        const slideData =
+            doc?.data?.slideData ||
+            doc?.slideData ||
+            slides;
 
-//     } catch (err) {
-//         console.error(err);
-//     }
-// };
+        // ✅ Theme fallback logic
+        const themeFromDoc =
+            doc?.data?.theme ||
+            doc?.theme ||
+            null;
+
+        const finalTheme = {
+            ...DEFAULT_THEME,
+            ...(themeFromDoc || theme) // priority: API → local → default
+        };
+
+        const response = await fetch('http://localhost:8080/api/pptx/generate-pptx', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                slideData,
+                theme: finalTheme,
+                filename: `NeuralNotes-${Date.now()}.pptx`
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error('PPT generation failed');
+        }
+
+        const blob = await response.blob();
+
+        // ✅ Download file
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `NeuralNotes-${Date.now()}.pptx`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+    } catch (err) {
+        console.error(err);
+        alert(err.message || 'Failed to generate PPT');
+    } finally {
+        setIsGenerating(false);
+    }
+}
 
     // ── Loading / Error ──────────────────────────────────────────────────────
     if (loading) {
@@ -455,7 +453,7 @@ async function handleServerGenerate(format) {
                     onPrevSlide={prevSlide}
                     onNextSlide={nextSlide}
                     onPresent={handlePresent}
-                    onExportPPTX={exportPPTX}
+                    onExportPPTX={handleServerGeneratePPT}
                     onServerGenerate={handleServerGenerate}
                     isGenerating={isGenerating}
                     isMobile={isMobile}

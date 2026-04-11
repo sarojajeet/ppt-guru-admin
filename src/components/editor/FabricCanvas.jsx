@@ -264,159 +264,157 @@ const FabricCanvas = memo(function FabricCanvas({
     }, []);
 
     /* ── Sync slide data → canvas objects ─────────── */
-    const syncSlideToCanvas = useCallback((slideData) => {
-        const fc = fcRef.current;
-        if (!fc || !slideData) return;
-        isSyncing.current = true;
+   
+const syncSlideToCanvas = useCallback((slideData) => {
+    const fc = fcRef.current;
+    if (!fc || !slideData) return;
+    isSyncing.current = true;
 
-        fc.clear();
-        fc.backgroundColor = 'transparent';
+    fc.clear();
+    fc.backgroundColor = 'transparent';
 
-        const promises = [];
+    const promises = [];
 
-        slideData.elements.forEach(el => {
-            if (el.type === 'text') {
-                const hasMath = containsLatex(el.content);
+    slideData.elements.forEach(el => {
+        if (el.type === 'text') {
+            const hasMath = containsLatex(el.content);
 
-                // Clamp position & width so element stays within the slide
-                const PAD = 10;
-                const clampedX = Math.max(0, Math.min(el.x ?? 0, SLIDE_W - PAD));
-                const clampedY = Math.max(0, Math.min(el.y ?? 0, SLIDE_H - PAD));
-                const maxW = SLIDE_W - clampedX - PAD;
-                const clampedW = Math.max(60, Math.min(el.w || 400, maxW));
+            const PAD = 10;
+            const clampedX = Math.max(0, Math.min(el.x ?? 0, SLIDE_W - PAD));
+            const clampedY = Math.max(0, Math.min(el.y ?? 0, SLIDE_H - PAD));
+            const maxW = SLIDE_W - clampedX - PAD;
+            const clampedW = Math.max(60, Math.min(el.w || 400, maxW));
 
-                if (hasMath) {
-                    // Math elements: invisible Rect for Fabric interaction;
-                    // KaTeX rendering handled by MathOverlayLayer (DOM overlay)
-                    const rect = new fabric.Rect({
-                        left: clampedX,
-                        top: clampedY,
-                        width: clampedW,
-                        height: el.h || 120,
-                        fill: 'transparent',
-                        stroke: 'transparent',
-                        strokeWidth: 0,
-                        ...CONTROL_STYLE,
-                        padding: 1, // tighter selection box for math (overlay handles rendering)
-                        elementId: el.id,
-                        elementType: 'math',
-                    });
-                    rect.setControlsVisibility({ mt: false, mb: false });
-                    fc.add(rect);
-                } else {
-                    // Non-math text: standard Fabric Textbox
-                    const plainText = htmlToPlainText(el.content || '');
-                    const displayText = plainText || ' ';
-
-                    const baseFont = el.fontFamily || 'Inter';
-                    const fontStack = getFontStack(baseFont, displayText);
-
-                    // Only use splitByGrapheme for CJK scripts (no word spaces).
-                    // Devanagari/Latin use word-based wrapping for accurate height measurement.
-                    const hasCJK = /[\u4E00-\u9FFF\u3000-\u30FF\u31F0-\u31FF\uAC00-\uD7AF\u3400-\u4DBF\uF900-\uFAFF]/.test(displayText);
-
-                    const tb = new fabric.Textbox(displayText, {
-                        left: clampedX,
-                        top: clampedY,
-                        width: clampedW,
-                        fontSize: el.fontSize || 24,
-                        fontFamily: fontStack,
-                        fill: el.color || theme.text,
-                        fontWeight: el.fontWeight || 'normal',
-                        fontStyle: el.fontStyle || 'normal',
-                        underline: el.underline || false,
-                        linethrough: el.linethrough || false,
-                        textAlign: el.textAlign || 'left',
-                        splitByGrapheme: hasCJK,
-                        ...CONTROL_STYLE,
-                        elementId: el.id,
-                        elementType: 'text',
-                    });
-                    fc.add(tb);
-                }
-            } else if (el.type === 'image' && el.content) {
-                const imgX = Math.max(0, Math.min(el.x ?? 0, SLIDE_W - 20));
-                const imgY = Math.max(0, Math.min(el.y ?? 0, SLIDE_H - 20));
-                const imgW = Math.min(el.w || 300, SLIDE_W - imgX);
-                const imgH = Math.min(el.h || 200, SLIDE_H - imgY);
-
-                const applyImage = (img) => {
-                    if (!img || !fcRef.current) return;
-                    img.set({
-                        left: imgX,
-                        top: imgY,
-                        ...CONTROL_STYLE,
-                        elementId: el.id,
-                        elementType: 'image',
-                    });
-                    // Scale each axis independently to fit exact target dimensions
-                    const sX = imgW / (img.width || imgW);
-                    const sY = imgH / (img.height || imgH);
-                    img.set({ scaleX: sX, scaleY: sY });
-                    fc.add(img);
-                    fc.requestRenderAll();
-                };
-
-                // Try with CORS first, fall back to no-CORS (tainted canvas but visible)
-                const p = fabric.FabricImage.fromURL(el.content, { crossOrigin: 'anonymous' })
-                    .then(applyImage)
-                    .catch(() =>
-                        fabric.FabricImage.fromURL(el.content)
-                            .then(applyImage)
-                            .catch(() => {})
-                    );
-                promises.push(p);
-            } else if (el.type === 'image' && !el.content) {
-                const phX = Math.max(0, Math.min(el.x ?? 0, SLIDE_W - 20));
-                const phY = Math.max(0, Math.min(el.y ?? 0, SLIDE_H - 20));
+            if (hasMath) {
                 const rect = new fabric.Rect({
-                    left: phX, top: phY,
-                    width: Math.min(el.w || 300, SLIDE_W - phX),
-                    height: Math.min(el.h || 200, SLIDE_H - phY),
-                    fill: 'rgba(128,128,128,0.15)',
-                    stroke: 'rgba(128,128,128,0.4)',
-                    strokeWidth: 2,
-                    strokeDashArray: [8, 4],
+                    left: clampedX,
+                    top: clampedY,
+                    width: clampedW,
+                    height: el.h || 120,
+                    fill: 'transparent',
+                    stroke: 'transparent',
+                    strokeWidth: 0,
+                    ...CONTROL_STYLE,
+                    padding: 1,
+                    elementId: el.id,
+                    elementType: 'math',
+                });
+                rect.setControlsVisibility({ mt: false, mb: false });
+                fc.add(rect);
+            } else {
+                const plainText = htmlToPlainText(el.content || '');
+                const displayText = plainText || ' ';
+
+                const baseFont = el.fontFamily || 'Inter';
+                const fontStack = getFontStack(baseFont, displayText);
+
+                const hasCJK = /[\u4E00-\u9FFF\u3000-\u30FF\u31F0-\u31FF\uAC00-\uD7AF\u3400-\u4DBF\uF900-\uFAFF]/.test(displayText);
+
+                const tb = new fabric.Textbox(displayText, {
+                    left: clampedX,
+                    top: clampedY,
+                    width: clampedW,
+                    fontSize: el.fontSize || 24,
+                    fontFamily: fontStack,
+                    fill: el.color || theme.text,
+                    fontWeight: el.fontWeight || 'normal',
+                    fontStyle: el.fontStyle || 'normal',
+                    underline: el.underline || false,
+                    linethrough: el.linethrough || false,
+                    textAlign: el.textAlign || 'left',
+                    splitByGrapheme: hasCJK,
+                    ...CONTROL_STYLE,
+                    elementId: el.id,
+                    elementType: 'text',
+                });
+                fc.add(tb);
+            }
+
+        // ─── IMAGE (accepts both el.src and el.content as URL) ───────────
+        } else if (el.type === 'image' && (el.src || el.content)) {
+            const imgUrl = el.src || el.content;          // ← KEY FIX
+            const imgX = Math.max(0, Math.min(el.x ?? 0, SLIDE_W - 20));
+            const imgY = Math.max(0, Math.min(el.y ?? 0, SLIDE_H - 20));
+            const imgW = Math.min(el.w || 300, SLIDE_W - imgX);
+            const imgH = Math.min(el.h || 200, SLIDE_H - imgY);
+
+            const applyImage = (img) => {
+                if (!img || !fcRef.current) return;
+                img.set({
+                    left: imgX,
+                    top: imgY,
                     ...CONTROL_STYLE,
                     elementId: el.id,
                     elementType: 'image',
                 });
-                fc.add(rect);
-            } else if (el.type === 'shape') {
-                const clampedEl = {
-                    ...el,
-                    x: Math.max(0, Math.min(el.x ?? 0, SLIDE_W - 20)),
-                    y: Math.max(0, Math.min(el.y ?? 0, SLIDE_H - 20)),
-                };
-                clampedEl.w = Math.min(el.w || 200, SLIDE_W - clampedEl.x);
-                clampedEl.h = Math.min(el.h || 200, SLIDE_H - clampedEl.y);
-                const shape = createFabricShape(clampedEl);
-                if (shape) {
-                    shape.set(CONTROL_STYLE);
-                    fc.add(shape);
-                }
-            }
-        });
+                const sX = imgW / (img.width || imgW);
+                const sY = imgH / (img.height || imgH);
+                img.set({ scaleX: sX, scaleY: sY });
+                fc.add(img);
+                fc.requestRenderAll();
+            };
 
-        const finishSync = () => {
-            isSyncing.current = false;
-            if (selectedId) {
-                const obj = fc.getObjects().find(o => o.elementId === selectedId);
-                if (obj) {
-                    fc.setActiveObject(obj);
-                    onEditorReady(obj);
-                }
-            }
-            fc.requestRenderAll();
-        };
+            const p = fabric.FabricImage.fromURL(imgUrl, { crossOrigin: 'anonymous' })
+                .then(applyImage)
+                .catch(() =>
+                    fabric.FabricImage.fromURL(imgUrl)
+                        .then(applyImage)
+                        .catch(() => {})
+                );
+            promises.push(p);
 
-        if (promises.length > 0) {
-            Promise.all(promises).then(finishSync);
-        } else {
-            finishSync();
+        // ─── IMAGE PLACEHOLDER (no URL at all) ───────────────────────────
+        } else if (el.type === 'image' && !(el.src || el.content)) {
+            const phX = Math.max(0, Math.min(el.x ?? 0, SLIDE_W - 20));
+            const phY = Math.max(0, Math.min(el.y ?? 0, SLIDE_H - 20));
+            const rect = new fabric.Rect({
+                left: phX, top: phY,
+                width: Math.min(el.w || 300, SLIDE_W - phX),
+                height: Math.min(el.h || 200, SLIDE_H - phY),
+                fill: 'rgba(128,128,128,0.15)',
+                stroke: 'rgba(128,128,128,0.4)',
+                strokeWidth: 2,
+                strokeDashArray: [8, 4],
+                ...CONTROL_STYLE,
+                elementId: el.id,
+                elementType: 'image',
+            });
+            fc.add(rect);
+
+        } else if (el.type === 'shape') {
+            const clampedEl = {
+                ...el,
+                x: Math.max(0, Math.min(el.x ?? 0, SLIDE_W - 20)),
+                y: Math.max(0, Math.min(el.y ?? 0, SLIDE_H - 20)),
+            };
+            clampedEl.w = Math.min(el.w || 200, SLIDE_W - clampedEl.x);
+            clampedEl.h = Math.min(el.h || 200, SLIDE_H - clampedEl.y);
+            const shape = createFabricShape(clampedEl);
+            if (shape) {
+                shape.set(CONTROL_STYLE);
+                fc.add(shape);
+            }
         }
-    }, [theme.text, selectedId]);
+    });
 
+    const finishSync = () => {
+        isSyncing.current = false;
+        if (selectedId) {
+            const obj = fc.getObjects().find(o => o.elementId === selectedId);
+            if (obj) {
+                fc.setActiveObject(obj);
+                onEditorReady(obj);
+            }
+        }
+        fc.requestRenderAll();
+    };
+
+    if (promises.length > 0) {
+        Promise.all(promises).then(finishSync);
+    } else {
+        finishSync();
+    }
+}, [theme.text, selectedId]);
     useEffect(() => {
         if (isInternalUpdate.current) {
             isInternalUpdate.current = false;
@@ -458,21 +456,30 @@ const FabricCanvas = memo(function FabricCanvas({
                         if (el.strokeWidth !== undefined) obj.set('strokeWidth', el.strokeWidth);
                         obj.dirty = true;
                     } else if (obj.elementType === 'image') {
-                        obj.set('left', el.x ?? obj.left);
-                        obj.set('top', el.y ?? obj.top);
-                        if (el.w && el.h) {
-                            // Use native image dimensions (immune to previous corruption)
-                            const nativeW = obj._element?.naturalWidth || obj.width;
-                            const nativeH = obj._element?.naturalHeight || obj.height;
-                            // Self-heal: restore native width/height if they were overwritten
-                            if (obj._element && (obj.width !== nativeW || obj.height !== nativeH)) {
-                                obj.set({ width: nativeW, height: nativeH });
-                            }
-                            obj.set('scaleX', el.w / nativeW);
-                            obj.set('scaleY', el.h / nativeH);
-                        }
-                        obj.setCoords();
-                        obj.dirty = true;
+    obj.set('left', el.x ?? obj.left);
+    obj.set('top', el.y ?? obj.top);
+    if (el.w && el.h) {
+        const nativeW = obj._element?.naturalWidth || obj.width;
+        const nativeH = obj._element?.naturalHeight || obj.height;
+        if (obj._element && (obj.width !== nativeW || obj.height !== nativeH)) {
+            obj.set({ width: nativeW, height: nativeH });
+        }
+        obj.set('scaleX', el.w / nativeW);
+        obj.set('scaleY', el.h / nativeH);
+    }
+    // Reload image if src/content URL changed
+    const newSrc = el.src || el.content;
+    const currentSrc = obj._element?.src;
+    if (newSrc && currentSrc && !currentSrc.includes(newSrc.split('?')[0])) {
+        fabric.FabricImage.fromURL(newSrc, { crossOrigin: 'anonymous' })
+            .then(newImg => {
+                obj._element = newImg._element;
+                obj.dirty = true;
+                fc.requestRenderAll();
+            }).catch(() => {});
+    }
+    obj.setCoords();
+    obj.dirty = true;
                     }
                 });
                 fc.requestRenderAll();

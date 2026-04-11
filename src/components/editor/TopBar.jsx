@@ -96,7 +96,7 @@ const TopBar = memo(function TopBar({
                     <>
                         <div style={{ width: 1, height: 24, background: 'var(--nn-border)', margin: '0 4px', flexShrink: 0 }} />
 
-                        <button onClick={onExportPDF} disabled={isGenerating} title="Generate PPT on server"
+                        <button onClick={onExportPPTX} disabled={isGenerating} title="Generate PPT on server"
                             className="nn-toolbar-btn"
                             style={{
                                 display: 'flex', alignItems: 'center', gap: isTablet ? 0 : 6,
