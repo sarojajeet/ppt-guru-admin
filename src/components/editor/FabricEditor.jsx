@@ -371,7 +371,7 @@ async function handleServerGeneratePPT() {
             ...(themeFromDoc || theme) // priority: API → local → default
         };
 
-        const response = await fetch('http://localhost:8080/api/pptx/generate-pptx', {
+        const response = await fetch('https://seashell-app-98hn3.ondigitalocean.app/api/pptx/generate-pptx', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
