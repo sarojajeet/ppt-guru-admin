@@ -406,6 +406,46 @@ async function handleServerGeneratePPT() {
     }
 }
 
+
+const exportPDF = async () => {
+    setIsGenerating(true);
+    try {
+        const response = await fetch('https://seashell-app-98hn3.ondigitalocean.app/api/pdf/export', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`, // your auth token
+            },
+            body: JSON.stringify({
+                slides,
+                theme,
+                documentTitle: `SlideGuru-${documentId}`,
+            }),
+        });
+
+        if (!response.ok) {
+            const err = await response.json();
+            throw new Error(err.error || 'PDF export failed');
+        }
+
+        // Stream the PDF blob and trigger download
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `SlideGuru-${Date.now()}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+
+    } catch (err) {
+        console.error('[exportPDF]', err);
+        alert('PDF export failed: ' + err.message);
+    } finally {
+        setIsGenerating(false);
+    }
+};
     // ── Loading / Error ──────────────────────────────────────────────────────
     if (loading) {
         return (
@@ -454,6 +494,7 @@ async function handleServerGeneratePPT() {
                     onNextSlide={nextSlide}
                     onPresent={handlePresent}
                     onExportPPTX={handleServerGeneratePPT}
+                     onExportPDF={exportPDF}
                     onServerGenerate={handleServerGenerate}
                     isGenerating={isGenerating}
                     isMobile={isMobile}
