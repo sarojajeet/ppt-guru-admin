@@ -32,6 +32,7 @@ import ReviewsAdmin from "./components/Reviewsadmin";
 import Transactions from "./components/Transactions";
 import Subscriptions from "./components/Subscriptions";
 import AssignPlan from "./components/Assignplan";
+import BugReports from "./components/BugReports";
 
 // import FabricEditor from "./components/editor/FabricEditor";
 
@@ -199,6 +200,10 @@ function App() {
                     <Route
                       path="/reviews"
                       element={<ReviewsAdmin />}
+                    />
+                    <Route
+                      path="/bug-reports"
+                      element={<BugReports />}
                     />
                     <Route
                       path="/system"

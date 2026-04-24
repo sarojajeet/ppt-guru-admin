@@ -63,3 +63,12 @@ export const generateFinalDocument = async (documentId, format) => {
     format,
   });
 };
+
+/**
+ * Get all bug reports (admin)
+ * @param {object} params - { status, page, limit }
+ * @returns {Promise} Bug reports list with pagination
+ */
+export const getAllBugReports = async (params) => {
+  return API.get('/bug-reports', { params });
+};

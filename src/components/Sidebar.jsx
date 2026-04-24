@@ -14,6 +14,7 @@ const Sidebar = ({ currentPage, navigate, onLogout }) => {
 
     { id: 'transactions', label: 'Transactions', icon: 'ri-money-dollar-circle-fill', section: 'Manage' },
     { id: 'reviews', label: 'Reviews', icon: 'ri-star-line', section: 'Manage' },
+    { id: 'bug-reports', label: 'Bug Reports', icon: 'ri-bug-fill', section: 'Manage' },
     { id: 'system', label: 'System', icon: 'ri-settings-4-fill', section: 'Settings' },
   ];
 
